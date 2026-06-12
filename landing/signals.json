@@ -1,0 +1,23 @@
+[
+  {
+    "token": "CAKE",
+    "divergence": 100.0,
+    "regime": "distribution",
+    "direction": "short",
+    "confidence": 1.0
+  },
+  {
+    "token": "XYZL",
+    "divergence": -92.6,
+    "regime": "accumulation",
+    "direction": "long",
+    "confidence": 0.93
+  },
+  {
+    "token": "ABCN",
+    "divergence": 0.0,
+    "regime": "chop",
+    "direction": "none",
+    "confidence": 0.0
+  }
+]

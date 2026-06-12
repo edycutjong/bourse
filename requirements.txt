@@ -1,0 +1,14 @@
+# core
+requests>=2.31
+python-dotenv>=1.0
+pandas>=2.1
+numpy>=1.26
+pyyaml>=6.0
+# server + commerce (verify exact extras name against the repo)
+fastapi>=0.110
+uvicorn>=0.29
+# bnbagent-sdk (verified on PyPI: bnbagent 0.3.6). Server extra pulls FastAPI+Uvicorn.
+# ERC-8004 identity + ERC-8183 commerce + x402 signer live here.
+bnbagent[server]>=0.3.6
+# tests
+pytest>=8.0

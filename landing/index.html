@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bourse — the exchange for strategy intelligence</title>
+<style>
+  :root{--bg:#0b0e14;--card:#141925;--line:#243049;--red:#ff5470;--green:#36d399;--mut:#8aa0c6}
+  *{box-sizing:border-box}body{margin:0;background:var(--bg);color:#e6edf7;font:15px/1.5 ui-sans-serif,system-ui}
+  .wrap{max-width:880px;margin:0 auto;padding:32px}
+  h1{margin:0;font-size:26px}.tag{color:var(--mut);margin:4px 0 24px}
+  table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--line)}th{color:var(--mut);font-weight:600}
+  .short{color:var(--red);font-weight:700}.long{color:var(--green);font-weight:700}.none{color:var(--mut)}
+  .pill{font:12px ui-monospace;background:#1d2533;border:1px solid var(--line);border-radius:6px;padding:2px 7px}
+  .hire{float:right;background:#2b3a55;border:1px solid var(--line);color:#cfe0ff;border-radius:8px;padding:8px 12px;text-decoration:none}
+  footer{color:var(--mut);margin-top:18px;font-size:13px}
+</style></head>
+<body><div class="wrap">
+  <a class="hire" href="#">Hire via ERC-8183</a>
+  <h1>BOURSE</h1>
+  <div class="tag">the exchange for strategy intelligence — <em>fade the crowd, follow the flow.</em></div>
+  <table id="board"><thead><tr>
+    <th>Token</th><th>Divergence</th><th>Regime</th><th>Signal</th><th>Confidence</th></tr></thead>
+    <tbody id="rows"><tr><td colspan="5" class="none">loading signals.json…</td></tr></tbody>
+  </table>
+  <footer>Static board reads <span class="pill">signals.json</span> (from scripts/seed.py). Run <span class="pill">--live</span> to refresh from CMC MCP. Demo data is engineered (see SEED_DATA.md); --live proves authenticity.</footer>
+</div>
+<script>
+fetch('signals.json').then(r=>r.json()).then(rows=>{
+  const t=document.getElementById('rows');t.innerHTML='';
+  rows.sort((a,b)=>Math.abs(b.divergence)-Math.abs(a.divergence)).forEach(s=>{
+    const cls=s.direction==='short'?'short':s.direction==='long'?'long':'none';
+    const sig=s.direction==='none'?'—':s.direction.toUpperCase();
+    t.insertAdjacentHTML('beforeend',
+      `<tr><td>${s.token}</td><td class="${cls}">${s.divergence>0?'+':''}${s.divergence}</td>
+       <td>${s.regime}</td><td class="${cls}">${sig}</td><td>${(s.confidence*100|0)}%</td></tr>`);
+  });
+}).catch(()=>{document.getElementById('rows').innerHTML='<tr><td colspan=5 class=none>generate signals.json first</td></tr>'});
+</script></body></html>

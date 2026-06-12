@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bourse-signal"
+version = "0.1.0"
+description = "Crowd-vs-smart-money divergence engine + CMC Skill, hireable on-chain via ERC-8183"
+requires-python = ">=3.11"
+dependencies = ["requests>=2.31", "pandas>=2.1", "numpy>=1.26", "pyyaml>=6.0", "python-dotenv>=1.0"]
+
+[project.optional-dependencies]
+server = ["fastapi>=0.110", "uvicorn>=0.29"]
+dev = ["pytest>=8.0"]
+
+[tool.setuptools]
+packages = ["bourse"]
+
+# Install editable so `bourse` imports everywhere:  pip install -e .
