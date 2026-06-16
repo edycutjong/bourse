@@ -637,7 +637,7 @@ def test_fetch_fear_greed_history_success(monkeypatch):
 
 
 def test_optimize_weights_success(monkeypatch):
-    import optimize_weights
+    import optimize_weights  # type: ignore
     import bourse.engine
     # Restore original weights afterwards to avoid side-effects on other tests
     orig_w = dict(bourse.engine.W)
@@ -648,7 +648,7 @@ def test_optimize_weights_success(monkeypatch):
 
 
 def test_optimize_weights_missing_fixture(monkeypatch):
-    import optimize_weights
+    import optimize_weights  # type: ignore
     original_exists = os.path.exists
     monkeypatch.setattr(os.path, "exists", lambda p: False if "backtest_cake.json" in p else original_exists(p))
     with patch("sys.argv", ["optimize_weights.py"]):
@@ -657,7 +657,7 @@ def test_optimize_weights_missing_fixture(monkeypatch):
 
 
 def test_optimize_weights_exception(monkeypatch):
-    import optimize_weights
+    import optimize_weights  # type: ignore
     import bourse.engine
     orig_w = dict(bourse.engine.W)
     monkeypatch.setattr(optimize_weights, "STEPS", [0.0, 1.0])
@@ -677,7 +677,7 @@ def test_optimize_weights_exception(monkeypatch):
 
 
 def test_execute_strategy_no_action(monkeypatch):
-    import execute_strategy
+    import execute_strategy  # type: ignore
     # Mock compute to return direction = none
     from bourse.engine import Signal
     mock_sig = Signal("CAKE", 0.0, "chop", "none", 0.0)
@@ -687,7 +687,7 @@ def test_execute_strategy_no_action(monkeypatch):
 
 
 def test_execute_strategy_success(monkeypatch):
-    import execute_strategy
+    import execute_strategy  # type: ignore
     # Mock environment
     monkeypatch.setenv("WALLET_PASSWORD", "mock_password")
     monkeypatch.setenv("PRIVATE_KEY", "0x4e582560bc6ffb3131547778dc9106d2956035113ce76fc5936ac1ed28402caa")
@@ -701,14 +701,14 @@ def test_execute_strategy_success(monkeypatch):
     mock_client.w3.eth.wait_for_transaction_receipt.return_value = MagicMock(blockNumber=123)
     mock_client.w3.to_hex.return_value = "0xdata"
     
-    with patch("bnbagent.wallets.EVMWalletProvider", return_value=mock_wallet):
-        with patch("bnbagent.erc8183.ERC8183Client", return_value=mock_client):
+    with patch("execute_strategy.EVMWalletProvider", return_value=mock_wallet):
+        with patch("execute_strategy.ERC8183Client", return_value=mock_client):
             with patch("sys.argv", ["execute_strategy.py", "--token", "CAKE"]):
                 execute_strategy.main()
 
 
 def test_execute_strategy_missing_fixture(monkeypatch):
-    import execute_strategy
+    import execute_strategy  # type: ignore
     original_exists = os.path.exists
     monkeypatch.setattr(os.path, "exists", lambda p: False if "demo.json" in p else original_exists(p))
     with patch("sys.argv", ["execute_strategy.py"]):
@@ -717,7 +717,7 @@ def test_execute_strategy_missing_fixture(monkeypatch):
 
 
 def test_execute_strategy_missing_env(monkeypatch):
-    import execute_strategy
+    import execute_strategy  # type: ignore
     monkeypatch.delenv("WALLET_PASSWORD", raising=False)
     with patch("sys.argv", ["execute_strategy.py"]):
         with pytest.raises(SystemExit):
@@ -725,7 +725,7 @@ def test_execute_strategy_missing_env(monkeypatch):
 
 
 def test_execute_strategy_invalid_token(monkeypatch):
-    import execute_strategy
+    import execute_strategy  # type: ignore
     with patch("sys.argv", ["execute_strategy.py", "--token", "INVALID"]):
         with pytest.raises(SystemExit):
             execute_strategy.main()
