@@ -14,6 +14,9 @@
   [![Tests](https://img.shields.io/badge/pytest-161_passing-22c55e?style=flat)](./Makefile#L63)
   ![Python](https://img.shields.io/badge/Python_3.11+-3776AB?style=flat&logo=python&logoColor=white)
   ![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=flat&logo=fastapi&logoColor=white)
+  ![BNB Chain](https://img.shields.io/badge/BNB_Chain-F3BA2F?style=flat&logo=binance&logoColor=white)
+  ![CoinMarketCap](https://img.shields.io/badge/CoinMarketCap-174AFF?style=flat&logo=coinmarketcap&logoColor=white)
+  [![License: MIT](https://img.shields.io/badge/License-MIT-f59e0b?style=flat)](./LICENSE)
   [![CI](https://github.com/edycutjong/bourse/actions/workflows/ci.yml/badge.svg)](https://github.com/edycutjong/bourse/actions/workflows/ci.yml)
 </div>
 

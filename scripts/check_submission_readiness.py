@@ -101,13 +101,35 @@ def show(title, bucket):
     return sum(not ok for _, ok, _ in bucket)
 
 
+def update_readme_test_count(collected):
+    if collected <= 0:
+        return
+    readme_path = os.path.join(ROOT, "README.md")
+    if not os.path.exists(readme_path):
+        return
+    content = open(readme_path).read()
+    
+    # Replace pytest-<num>_passing
+    new_content = re.sub(r"pytest-\d+_passing", f"pytest-{collected}_passing", content)
+    # Replace pytest (<num> tests)
+    new_content = re.sub(r"pytest \(\d+ tests\)", f"pytest ({collected} tests)", new_content)
+    
+    if new_content != content:
+        with open(readme_path, "w") as f:
+            f.write(new_content)
+        print(f"Auto-updated README.md test count to {collected}")
+
+
 def main():
+    collected = pytest_count()
+    update_readme_test_count(collected)
     required, optional = build_gates()
     req_fail = show("REQUIRED (Track-2 validity)", required)
     show("OPTIONAL (special-prize extras)", optional)
     print(f"\nRequired: {len(required) - req_fail}/{len(required)} passed", end="")
     print("  ✅ submission-ready" if not req_fail else "  ❌ not ready")
     sys.exit(1 if req_fail else 0)
+
 
 
 if __name__ == "__main__":
