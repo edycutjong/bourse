@@ -22,7 +22,7 @@
 ## 📸 See it in Action
 
 <div align="center">
-  <img src="landing/og-image.png" alt="Bourse Demo" width="100%">
+  <img src="docs/og-image.png" alt="Bourse Demo" width="100%">
 </div>
 
 > **A retail trader apes a KOL-pumped token at the top — while the whales who funded those KOLs quietly sell into his bid.** Bourse is the signal that screams *fade, don't follow* — and sells it to any agent by the cent.
