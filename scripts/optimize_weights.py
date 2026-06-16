@@ -12,6 +12,9 @@ from bourse import run_backtest
 import bourse.engine
 
 
+STEPS = [0.0, 0.2, 0.4, 0.6, 0.8, 1.0]
+
+
 def main():
     root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
     bt_fix = os.path.join(root, "data", "fixtures", "backtest_cake.json")
@@ -31,7 +34,7 @@ def main():
     best_w = None
     
     # Grid search step
-    steps = [0.0, 0.2, 0.4, 0.6, 0.8, 1.0]
+    steps = STEPS
     
     for w_narrative in steps:
         for w_social in steps:

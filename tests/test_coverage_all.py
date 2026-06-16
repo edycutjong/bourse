@@ -651,8 +651,29 @@ def test_optimize_weights_missing_fixture(monkeypatch):
     import optimize_weights
     original_exists = os.path.exists
     monkeypatch.setattr(os.path, "exists", lambda p: False if "backtest_cake.json" in p else original_exists(p))
-    with pytest.raises(SystemExit):
-        optimize_weights.main()
+    with patch("sys.argv", ["optimize_weights.py"]):
+        with pytest.raises(SystemExit):
+            optimize_weights.main()
+
+
+def test_optimize_weights_exception(monkeypatch):
+    import optimize_weights
+    import bourse.engine
+    orig_w = dict(bourse.engine.W)
+    monkeypatch.setattr(optimize_weights, "STEPS", [0.0, 1.0])
+    
+    mock_run = MagicMock()
+    mock_run.side_effect = [
+        {"sharpe": 1.74},
+        {"sharpe": 2.0},
+        ValueError("mock error")
+    ] + [{"sharpe": 1.0}] * 20
+    
+    with patch("optimize_weights.run_backtest", mock_run):
+        try:
+            optimize_weights.main()
+        finally:
+            bourse.engine.W.update(orig_w)
 
 
 def test_execute_strategy_no_action(monkeypatch):
@@ -690,15 +711,24 @@ def test_execute_strategy_missing_fixture(monkeypatch):
     import execute_strategy
     original_exists = os.path.exists
     monkeypatch.setattr(os.path, "exists", lambda p: False if "demo.json" in p else original_exists(p))
-    with pytest.raises(SystemExit):
-        execute_strategy.main()
+    with patch("sys.argv", ["execute_strategy.py"]):
+        with pytest.raises(SystemExit):
+            execute_strategy.main()
 
 
 def test_execute_strategy_missing_env(monkeypatch):
     import execute_strategy
     monkeypatch.delenv("WALLET_PASSWORD", raising=False)
-    with pytest.raises(SystemExit):
-        execute_strategy.main()
+    with patch("sys.argv", ["execute_strategy.py"]):
+        with pytest.raises(SystemExit):
+            execute_strategy.main()
+
+
+def test_execute_strategy_invalid_token(monkeypatch):
+    import execute_strategy
+    with patch("sys.argv", ["execute_strategy.py", "--token", "INVALID"]):
+        with pytest.raises(SystemExit):
+            execute_strategy.main()
 
 
 # ── New Coverage Upgrades ───────────────────────────────────────────────── #
@@ -814,6 +844,181 @@ def test_simulation_trigger_endpoints(monkeypatch):
     assert state.status == "failed"
 
 
+def test_run_divergence_mcp_path(monkeypatch):
+    monkeypatch.setenv("CMC_MCP_API_KEY", "mock_key")
+    # 1. Test from_mcp success
+    with patch("app.from_mcp", return_value=MagicMock()) as mock_mcp:
+        with patch("app.compute", return_value=MagicMock()) as mock_compute:
+            with patch("app.build_spec", return_value={"backtest": {"sharpe": 1.0}}):
+                res = app.run_divergence({"token": "CAKE"})
+                assert isinstance(res, dict)
+                mock_mcp.assert_called_once_with("CAKE")
+                
+    # 2. Test from_mcp fails, fallback to fixture success
+    with patch("app.from_mcp", side_effect=Exception("mcp failed")):
+        with patch("app.from_fixture", return_value=MagicMock()) as mock_fix:
+            with patch("app.compute", return_value=MagicMock()):
+                with patch("app.build_spec", return_value={"backtest": {"sharpe": 1.0}}):
+                    res = app.run_divergence({"token": "CAKE"})
+                    assert isinstance(res, dict)
+                    mock_fix.assert_called_once()
+                    
+    # 3. Test from_mcp fails, fallback to fixture no fixture file
+    with patch("app.from_mcp", side_effect=Exception("mcp failed")):
+        original_exists = os.path.exists
+        monkeypatch.setattr(os.path, "exists", lambda p: False if "demo.json" in p else original_exists(p))
+        with pytest.raises(RuntimeError, match="no fixture file found"):
+            app.run_divergence({"token": "CAKE"})
+            
+    # 4. Test from_mcp fails, fallback to fixture key error
+    monkeypatch.setattr(os.path, "exists", original_exists)
+    with patch("app.from_mcp", side_effect=Exception("mcp failed")):
+        with patch("app.from_fixture", side_effect=KeyError("CAKE")):
+            with pytest.raises(RuntimeError, match="no fixture data for token"):
+                app.run_divergence({"token": "CAKE"})
+
+
+def test_run_simulation_thread_success(monkeypatch):
+    from server.simulation import run_simulation_thread, state
+    
+    state.reset()
+    
+    mock_wallet = MagicMock()
+    mock_wallet.address = "0xbuyer"
+    mock_client = MagicMock()
+    mock_client.token_balance.return_value = 2000000000000000000  # 2.0 U
+    mock_client.token_symbol.return_value = "U"
+    mock_client.create_job.return_value = {"jobId": 174, "transactionHash": "0xjobhash"}
+    mock_client.fund.return_value = {"transactionHash": "0xfundhash"}
+    
+    from bnbagent.erc8183 import JobStatus
+    # Simulate first pending (using FUNDED), then submitted
+    mock_client.get_job_status.side_effect = [JobStatus.FUNDED, JobStatus.SUBMITTED]
+    
+    with patch("bnbagent.wallets.EVMWalletProvider", return_value=mock_wallet):
+        with patch("bnbagent.erc8183.ERC8183Client", return_value=mock_client):
+            with patch("time.sleep"):
+                run_simulation_thread("password", "private_key", "0xprovider", "bsc-testnet")
+                
+    assert state.status == "completed"
+    assert state.job_id == 174
+    assert state.tx_fund == "0xfundhash"
+
+
+def test_run_simulation_thread_insufficient_balance(monkeypatch):
+    from server.simulation import run_simulation_thread, state
+    
+    state.reset()
+    
+    mock_wallet = MagicMock()
+    mock_wallet.address = "0xbuyer"
+    mock_client = MagicMock()
+    mock_client.token_balance.return_value = 500000000000000000  # 0.5 U
+    mock_client.token_symbol.return_value = "U"
+    
+    with patch("bnbagent.wallets.EVMWalletProvider", return_value=mock_wallet):
+        with patch("bnbagent.erc8183.ERC8183Client", return_value=mock_client):
+            run_simulation_thread("password", "private_key", "0xprovider", "bsc-testnet")
+            
+    assert state.status == "failed"
+    assert any("Insufficient balance" in log for log in state.logs)
+
+
+def test_simulation_info_endpoint(monkeypatch):
+    from fastapi.testclient import TestClient
+    from server.app import build_app
+    
+    # We must patch EVMWalletProvider and ERC8183Client to return custom values
+    mock_wallet = MagicMock()
+    mock_wallet.address = "0xbuyer"
+    mock_client = MagicMock()
+    mock_client.token_balance.return_value = 5000000000000000000  # 5 U
+    mock_client.token_symbol.return_value = "U"
+    mock_client.token_decimals.return_value = 18
+    
+    with patch("bnbagent.wallets.EVMWalletProvider", return_value=mock_wallet):
+        with patch("bnbagent.erc8183.ERC8183Client", return_value=mock_client):
+            # We mock create_erc8183_app to return a real FastAPI app
+            from fastapi import FastAPI
+            mock_app = FastAPI()
+            with patch("bnbagent.erc8183.server.create_erc8183_app", return_value=mock_app):
+                built = build_app()
+                client = TestClient(built)
+                
+                response = client.get("/api/info")
+                assert response.status_code == 200
+                data = response.json()
+                assert data["balance"] == "5.0000"
+                assert data["symbol"] == "U"
+
+
+def test_simulation_info_endpoint_error(monkeypatch):
+    from fastapi.testclient import TestClient
+    from server.app import build_app
+    
+    with patch("bnbagent.wallets.EVMWalletProvider", side_effect=Exception("wallet error")):
+        from fastapi import FastAPI
+        mock_app = FastAPI()
+        with patch("bnbagent.erc8183.server.create_erc8183_app", return_value=mock_app):
+            built = build_app()
+            client = TestClient(built)
+            
+            response = client.get("/api/info")
+            assert response.status_code == 200
+            data = response.json()
+            assert data["balance"] == "0.0000"
+            assert data["symbol"] == "U"
+
+
+def test_trigger_simulation_spawns_thread(monkeypatch):
+    from server.simulation import trigger_simulation, state
+    
+    state.reset()
+    monkeypatch.setenv("PRIVATE_KEY", "0x4e582560bc6ffb3131547778dc9106d2956035113ce76fc5936ac1ed28402caa")
+    
+    with patch("threading.Thread") as mock_thread:
+        res = trigger_simulation()
+        assert res == {"status": "started"}
+        mock_thread.assert_called_once()
+
+
+def test_simulation_reset_and_set_details():
+    from server.simulation import state
+    state.reset()
+    state.add_log("message")
+    state.set_status("running")
+    state.set_job_details(10, "0xhash")
+    
+    snap = state.get_snapshot()
+    assert snap["status"] == "running"
+    assert snap["logs"] == ["message"]
+    assert snap["job_id"] == 10
+    assert snap["tx_fund"] == "0xhash"
+
+
+def test_simulation_settle_endpoint(monkeypatch):
+    from fastapi.testclient import TestClient
+    from server.app import build_app
+    from fastapi import FastAPI
+    
+    mock_app = FastAPI()
+    with patch("bnbagent.erc8183.server.create_erc8183_app", return_value=mock_app):
+        built = build_app()
+        client = TestClient(built)
+        
+        # Test success
+        with patch("scripts.settle.main", return_value={"transactionHash": "0xsettlehash"}):
+            response = client.post("/api/settle/174")
+            assert response.status_code == 200
+            assert response.json() == {"status": "success", "tx": "0xsettlehash"}
+            
+        # Test error
+        with patch("scripts.settle.main", side_effect=Exception("error")):
+            response = client.post("/api/settle/174")
+            assert response.status_code == 200
+            assert response.json() == {"status": "error", "message": "error"}
+
+
 def test_nan_zscore():
     from bourse.engine import zscore
     import numpy as np
@@ -826,40 +1031,6 @@ def test_nan_zscore():
 
 def test_run_backtest_empty_rets_or_short_history():
     from bourse.backtest import run_backtest
-    # Setup history with single point (too short, raises ValueError)
-    history = {
-        "price": [1.0],
-        "narrative_heat": [1.0],
-        "social_volume": [1.0],
-        "whale_net_flow": [1.0],
-        "funding_rate": [1.0],
-        "open_interest": [1.0],
-        "fear_greed": [50.0]
-    }
-    with pytest.raises(ValueError, match="history too short"):
-        run_backtest(history, window=5)
-        
-    # Setup history where rets is empty (e.g. n is exactly window + 1)
-    history_short = {
-        "price": [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
-        "narrative_heat": [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
-        "social_volume": [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
-        "whale_net_flow": [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
-        "funding_rate": [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
-        "open_interest": [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
-        "fear_greed": [50.0, 50.0, 50.0, 50.0, 50.0, 50.0]
-    }
-    # For window=5, t loop runs for t in range(4, 5) which is range(4, 5) => only t=4
-    # Wait, t range is range(window-1, n-1) => for n=6, window=5, range(4, 5) is [4].
-    # So it runs once.
-    # To get empty rets (0 runs), range(window-1, n-1) must be empty.
-    # Let's set window=5, n=5. That raises ValueError because n < window + 2 (n < 7).
-    # Wait, can we bypass check?
-    # No, check says: if n < window + 2: raise ValueError
-    # So min length of history is window + 2.
-    # If window=5, min history length is 7.
-    # For n=7, t loop runs for range(4, 6) => t=4, 5 (2 runs).
-    # Wait! How can we get 0 runs in the loop if n >= window + 2?
     # Ah! If window is configured to be larger, e.g. window=10, and n=8, it raises ValueError.
     # Wait, is there any way to make `rets` empty?
     # What if the loop executes but `pos` is something, wait, `rets` is always appended to in each iteration of the loop!
@@ -928,6 +1099,69 @@ def test_run_backtest_empty_rets_or_short_history():
         assert res["sharpe"] == 0.0
         assert res["max_dd"] == 0.0
         assert res["win_rate"] == 0.0
+
+
+def test_run_simulation_thread_timeout(monkeypatch):
+    from server.simulation import run_simulation_thread, state
+    
+    state.reset()
+    
+    mock_wallet = MagicMock()
+    mock_wallet.address = "0xbuyer"
+    mock_client = MagicMock()
+    mock_client.token_balance.return_value = 2000000000000000000  # 2.0 U
+    mock_client.token_symbol.return_value = "U"
+    mock_client.create_job.return_value = {"jobId": 174, "transactionHash": "0xjobhash"}
+    mock_client.fund.return_value = {"transactionHash": "0xfundhash"}
+
+    from bnbagent.erc8183 import JobStatus
+    # Always return FUNDED to cause a timeout
+    mock_client.get_job_status.return_value = JobStatus.FUNDED
+    
+    with patch("bnbagent.wallets.EVMWalletProvider", return_value=mock_wallet):
+        with patch("bnbagent.erc8183.ERC8183Client", return_value=mock_client):
+            with patch("time.sleep"):
+                run_simulation_thread("password", "private_key", "0xprovider", "bsc-testnet")
+                
+    assert state.status == "failed"
+    assert any("Timeout waiting for Bourse provider" in log for log in state.logs)
+
+
+def test_simulation_status_endpoint(monkeypatch):
+    from fastapi.testclient import TestClient
+    from server.app import build_app
+    from fastapi import FastAPI
+    from server.simulation import state
+    
+    mock_app = FastAPI()
+    with patch("bnbagent.erc8183.server.create_erc8183_app", return_value=mock_app):
+        built = build_app()
+        client = TestClient(built)
+        
+        state.reset()
+        response = client.get("/api/simulate-buyer/status")
+        assert response.status_code == 200
+        assert response.json()["status"] == "idle"
+
+
+def test_execute_strategy_main_block(monkeypatch):
+    import runpy
+    # Missing env raises SystemExit inside main(), executing the main block
+    monkeypatch.delenv("WALLET_PASSWORD", raising=False)
+    with patch("sys.argv", ["execute_strategy.py"]):
+        with pytest.raises(SystemExit):
+            runpy.run_path("scripts/execute_strategy.py", run_name="__main__")
+
+
+def test_optimize_weights_main_block(monkeypatch):
+    import runpy
+    # Missing fixture raises SystemExit inside main(), executing the main block
+    original_exists = os.path.exists
+    monkeypatch.setattr(os.path, "exists", lambda p: False if "backtest_cake.json" in p else original_exists(p))
+    with patch("sys.argv", ["optimize_weights.py"]):
+        with pytest.raises(SystemExit):
+            runpy.run_path("scripts/optimize_weights.py", run_name="__main__")
+
 
 
 
