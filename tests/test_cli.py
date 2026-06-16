@@ -1,25 +1,53 @@
-"""End-to-end CLI tests for scripts/signal.py (subprocess, offline fixture mode)."""
+"""End-to-end CLI tests for scripts/signal.py (run in-process via runpy, offline fixture mode)."""
 import json
 import os
-import subprocess
 import sys
-
 import pytest
+import runpy
+import io
+from unittest.mock import patch
 
-ROOT = os.path.join(os.path.dirname(__file__), "..")
+ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 CLI = os.path.join(ROOT, "scripts", "signal.py")
 
 
+def _run_script(script_path, *args):
+    stdout = io.StringIO()
+    stderr = io.StringIO()
+    script_abs = os.path.abspath(script_path)
+    
+    with patch("sys.argv", [script_abs, *args]):
+        with patch("sys.stdout", stdout):
+            with patch("sys.stderr", stderr):
+                try:
+                    runpy.run_path(script_abs, run_name="__main__")
+                    returncode = 0
+                except SystemExit as e:
+                    if isinstance(e.code, int):
+                        returncode = e.code
+                    else:
+                        returncode = 1 if e.code else 0
+                        if e.code:
+                            stderr.write(str(e.code))
+                except Exception as e:
+                    returncode = 1
+                    stderr.write(str(e))
+    class Result:
+        def __init__(self, rc, out, err):
+            self.returncode = rc
+            self.stdout = out
+            self.stderr = err
+    return Result(returncode, stdout.getvalue(), stderr.getvalue())
+
+
 def _run(*args):
-    return subprocess.run([sys.executable, CLI, *args],
-                          cwd=ROOT, capture_output=True, text=True, timeout=60)
+    return _run_script(CLI, *args)
 
 
 @pytest.fixture(autouse=True, scope="module")
 def _seed():
     if not os.path.exists(os.path.join(ROOT, "data", "fixtures", "demo.json")):
-        subprocess.run([sys.executable, os.path.join(ROOT, "scripts", "seed.py")],
-                       check=True)
+        _run_script(os.path.join(ROOT, "scripts", "seed.py"))
 
 
 def test_board_lists_all_tokens():
@@ -86,19 +114,18 @@ def test_invalid_argument_exits_nonzero():
 
 def test_seed_runs_successfully():
     script = os.path.join(ROOT, "scripts", "seed.py")
-    r = subprocess.run([sys.executable, script], cwd=ROOT, capture_output=True, text=True, timeout=30)
+    r = _run_script(script)
     assert r.returncode == 0
 
 
 def test_bench_runs_successfully():
     script = os.path.join(ROOT, "scripts", "bench.py")
-    r = subprocess.run([sys.executable, script, "-n", "5"], cwd=ROOT, capture_output=True, text=True, timeout=30)
+    r = _run_script(script, "-n", "5")
     assert r.returncode == 0
     assert "compute()" in r.stdout
 
 
 def test_settle_missing_job_id():
     script = os.path.join(ROOT, "scripts", "settle.py")
-    r = subprocess.run([sys.executable, script], cwd=ROOT, capture_output=True, text=True, timeout=30)
+    r = _run_script(script)
     assert r.returncode != 0
-

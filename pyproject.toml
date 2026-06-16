@@ -25,4 +25,10 @@ filterwarnings = [
     "ignore:The 'app' shortcut is now deprecated.*:DeprecationWarning",
 ]
 
+[tool.coverage.run]
+omit = [
+    "tests/*",
+    "scripts/claim_faucet.py",
+]
+
 
