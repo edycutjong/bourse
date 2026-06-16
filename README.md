@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="docs/icon-animated.svg" width="140" alt="Bourse">
+  <img src="docs/icon.svg" width="140" alt="Bourse">
 
   <h1>Bourse 🌈⃤</h1>
   <p><em>The exchange for strategy intelligence — fading the crowd, funded by whales.</em></p>

@@ -1,0 +1,448 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Background -->
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#06090f" />
+      <stop offset="100%" stop-color="#020407" />
+    </linearGradient>
+
+    <!-- Background grid pattern -->
+    <pattern id="gridPattern" width="32" height="32" patternUnits="userSpaceOnUse">
+      <path d="M 32 0 L 0 0 0 32" fill="none" stroke="#FFFFFF" stroke-width="0.5" opacity="0.03" />
+    </pattern>
+
+    <!-- Gold-Cyan flow gradient -->
+    <linearGradient id="flowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F3BA2F" />
+      <stop offset="100%" stop-color="#06B6D4" />
+    </linearGradient>
+
+    <!-- Volumetric Gold Beam Gradients -->
+    <linearGradient id="goldB" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#F3BA2F" stop-opacity="0" />
+      <stop offset="20%" stop-color="#F3BA2F" stop-opacity="0.65" />
+      <stop offset="70%" stop-color="#FFD966" stop-opacity="0.95" />
+      <stop offset="100%" stop-color="#FFF2CC" />
+    </linearGradient>
+    <linearGradient id="goldEdge" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FFE57F" stop-opacity="0" />
+      <stop offset="60%" stop-color="#FFE57F" stop-opacity="0.7" />
+      <stop offset="100%" stop-color="#FFFBE6" />
+    </linearGradient>
+
+    <!-- Volumetric Cyan Beam Gradients -->
+    <linearGradient id="cyanB" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#06B6D4" stop-opacity="0" />
+      <stop offset="20%" stop-color="#06B6D4" stop-opacity="0.65" />
+      <stop offset="70%" stop-color="#22D3EE" stop-opacity="0.95" />
+      <stop offset="100%" stop-color="#CFFAFE" />
+    </linearGradient>
+    <linearGradient id="cyanEdge" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#67E8F9" stop-opacity="0" />
+      <stop offset="60%" stop-color="#67E8F9" stop-opacity="0.7" />
+      <stop offset="100%" stop-color="#ECFEFF" />
+    </linearGradient>
+
+    <!-- White input beam -->
+    <linearGradient id="whiteB" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0" />
+      <stop offset="60%" stop-color="#FFFFFF" stop-opacity="0.4" />
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.9" />
+    </linearGradient>
+
+    <!-- Premium 3D Crystal Gradients (High Depth Glassmorphism) -->
+    <linearGradient id="fL" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1E293B" stop-opacity="0.75" />
+      <stop offset="70%" stop-color="#0F172A" stop-opacity="0.88" />
+      <stop offset="100%" stop-color="#090D16" stop-opacity="0.95" />
+    </linearGradient>
+    <linearGradient id="fR" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#334155" stop-opacity="0.7" />
+      <stop offset="70%" stop-color="#1E293B" stop-opacity="0.82" />
+      <stop offset="100%" stop-color="#0F172A" stop-opacity="0.92" />
+    </linearGradient>
+    <linearGradient id="fBt" x1="50%" y1="0%" x2="50%" y2="100%">
+      <stop offset="0%" stop-color="#1E293B" stop-opacity="0.8" />
+      <stop offset="100%" stop-color="#0A0F1D" stop-opacity="0.98" />
+    </linearGradient>
+
+    <!-- Chromatic Dispersion internal wedge gradients -->
+    <linearGradient id="internalRed" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#EF4444" stop-opacity="0" />
+      <stop offset="100%" stop-color="#EF4444" stop-opacity="0.18" />
+    </linearGradient>
+    <linearGradient id="internalGold" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#F3BA2F" stop-opacity="0" />
+      <stop offset="100%" stop-color="#F3BA2F" stop-opacity="0.25" />
+    </linearGradient>
+    <linearGradient id="internalGreen" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#10B981" stop-opacity="0" />
+      <stop offset="100%" stop-color="#10B981" stop-opacity="0.15" />
+    </linearGradient>
+    <linearGradient id="internalCyan" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#06B6D4" stop-opacity="0" />
+      <stop offset="100%" stop-color="#06B6D4" stop-opacity="0.25" />
+    </linearGradient>
+    <linearGradient id="internalPurple" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#8B5CF6" stop-opacity="0" />
+      <stop offset="100%" stop-color="#8B5CF6" stop-opacity="0.18" />
+    </linearGradient>
+
+    <!-- Iridescent Static Overlay -->
+    <linearGradient id="iriR" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F3BA2F" stop-opacity="0.12" />
+      <stop offset="50%" stop-color="#FFFFFF" stop-opacity="0.04" />
+      <stop offset="100%" stop-color="#06B6D4" stop-opacity="0.12" />
+    </linearGradient>
+
+    <!-- Physical dynamic glint sweep -->
+    <linearGradient id="iriSweep" x1="0%" y1="0%" x2="1" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0" />
+      <stop offset="30%" stop-color="#FFFFFF" stop-opacity="0" />
+      <stop offset="44%" stop-color="#F3BA2F" stop-opacity="0.12" />
+      <stop offset="50%" stop-color="#FFFFFF" stop-opacity="0.4" />
+      <stop offset="56%" stop-color="#06B6D4" stop-opacity="0.12" />
+      <stop offset="70%" stop-color="#FFFFFF" stop-opacity="0" />
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0" />
+      <animateTransform attributeName="gradientTransform" type="translate" values="-1 -1;1 1" dur="5.5s" repeatCount="indefinite" />
+    </linearGradient>
+
+    <!-- Gold-Cyan Border Ring -->
+    <linearGradient id="bdr" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#F3BA2F" stop-opacity="0.35" />
+      <stop offset="50%" stop-color="#FFFFFF" stop-opacity="0.06" />
+      <stop offset="100%" stop-color="#06B6D4" stop-opacity="0.35" />
+    </linearGradient>
+
+    <!-- Filters -->
+    <filter id="gB" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="16" />
+    </filter>
+    <filter id="gS" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="5" result="b" />
+      <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
+    </filter>
+    <filter id="gC" x="-120%" y="-120%" width="340%" height="340%">
+      <feGaussianBlur stdDeviation="9" result="b" />
+      <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
+    </filter>
+    <filter id="gF" x="-300%" y="-300%" width="700%" height="700%">
+      <feGaussianBlur stdDeviation="3" result="b" />
+      <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
+    </filter>
+    <filter id="particleGlow" x="-200%" y="-200%" width="500%" height="500%">
+      <feGaussianBlur stdDeviation="4" result="b" />
+      <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
+    </filter>
+  </defs>
+
+  <style>
+    /* ── BEAM BREATHING ── */
+    @keyframes beamPulse {
+      0%, 100% { opacity: 0.75; }
+      50% { opacity: 1; }
+    }
+    .gold-beam { animation: beamPulse 3.5s ease-in-out infinite; }
+    .cyan-beam { animation: beamPulse 3.5s ease-in-out infinite 1.75s; }
+
+    /* ── INPUT BEAM SHIMMER ── */
+    @keyframes inputPulse {
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 0.7; }
+    }
+    .input-beam { animation: inputPulse 3s ease-in-out infinite 0.5s; }
+
+    /* ── AMBIENT GLOW BREATHING ── */
+    @keyframes glowPulse {
+      0%, 100% { opacity: 0.06; }
+      50% { opacity: 0.16; }
+    }
+    .amb-gold { animation: glowPulse 5s ease-in-out infinite; }
+    .amb-cyan { animation: glowPulse 5s ease-in-out infinite 2.5s; }
+
+    /* ── REFRACTION CORE THROB ── */
+    @keyframes coreThrob {
+      0%, 100% { r: 9.5; opacity: 0.8; }
+      40% { r: 13.5; opacity: 1; }
+    }
+    .core { animation: coreThrob 2.2s ease-in-out infinite; }
+
+    /* ── DOUBLE-HELIX PARTICLE TRAVEL (Offset Path + Sin Wobble) ── */
+    @keyframes travelGoldA {
+      0%   { offset-distance: 0%; opacity: 0; transform: translateY(0); }
+      10%  { opacity: 0.95; }
+      25%  { transform: translateY(5px); }
+      50%  { transform: translateY(-5px); }
+      75%  { transform: translateY(5px); }
+      85%  { opacity: 0.95; }
+      100% { offset-distance: 100%; opacity: 0; transform: translateY(0); }
+    }
+    @keyframes travelGoldB {
+      0%   { offset-distance: 0%; opacity: 0; transform: translateY(0); }
+      10%  { opacity: 0.95; }
+      25%  { transform: translateY(-5px); }
+      50%  { transform: translateY(5px); }
+      75%  { transform: translateY(-5px); }
+      85%  { opacity: 0.95; }
+      100% { offset-distance: 100%; opacity: 0; transform: translateY(0); }
+    }
+    .p-gold-1 { offset-path: path("M 286,222 C 340,190 390,140 468,104"); animation: travelGoldA 2.2s linear infinite; }
+    .p-gold-2 { offset-path: path("M 286,222 C 340,190 390,140 468,104"); animation: travelGoldB 2.2s linear infinite 0.73s; }
+    .p-gold-3 { offset-path: path("M 286,222 C 340,190 390,140 468,104"); animation: travelGoldA 2.2s linear infinite 1.46s; }
+
+    @keyframes travelCyanA {
+      0%   { offset-distance: 0%; opacity: 0; transform: translateY(0); }
+      10%  { opacity: 0.95; }
+      25%  { transform: translateY(5px); }
+      50%  { transform: translateY(-5px); }
+      75%  { transform: translateY(5px); }
+      85%  { opacity: 0.95; }
+      100% { offset-distance: 100%; opacity: 0; transform: translateY(0); }
+    }
+    @keyframes travelCyanB {
+      0%   { offset-distance: 0%; opacity: 0; transform: translateY(0); }
+      10%  { opacity: 0.95; }
+      25%  { transform: translateY(-5px); }
+      50%  { transform: translateY(5px); }
+      75%  { transform: translateY(-5px); }
+      85%  { opacity: 0.95; }
+      100% { offset-distance: 100%; opacity: 0; transform: translateY(0); }
+    }
+    .p-cyan-1 { offset-path: path("M 286,298 C 340,330 390,380 468,418"); animation: travelCyanA 2.2s linear infinite 0.36s; }
+    .p-cyan-2 { offset-path: path("M 286,298 C 340,330 390,380 468,418"); animation: travelCyanB 2.2s linear infinite 1.09s; }
+    .p-cyan-3 { offset-path: path("M 286,298 C 340,330 390,380 468,418"); animation: travelCyanA 2.2s linear infinite 1.82s; }
+
+    @keyframes travelInput {
+      0%   { offset-distance: 0%; opacity: 0; }
+      10%  { opacity: 0.8; }
+      85%  { opacity: 0.8; }
+      100% { offset-distance: 100%; opacity: 0; }
+    }
+    .p-input-1 { offset-path: path("M 38,254 C 90,256 150,252 220,260"); animation: travelInput 2.6s linear infinite; }
+    .p-input-2 { offset-path: path("M 38,258 C 90,260 150,256 220,260"); animation: travelInput 2.6s linear infinite 1.3s; }
+
+    /* ── PRISM BODY SHIMMER ── */
+    @keyframes prismShimmer {
+      0%, 100% { opacity: 0.92; }
+      50% { opacity: 1; }
+    }
+    .prism { animation: prismShimmer 4s ease-in-out infinite; }
+
+    /* ── SPECTRAL LINES FADE ── */
+    @keyframes spectralFade {
+      0%, 100% { opacity: 0.15; }
+      50% { opacity: 0.45; }
+    }
+    .spectral { animation: spectralFade 4s ease-in-out infinite 1s; }
+
+    /* ── BORDER GLOW ── */
+    @keyframes borderGlow {
+      0%, 100% { stroke-opacity: 0.2; }
+      50% { stroke-opacity: 0.5; }
+    }
+    .border-ring { animation: borderGlow 6s ease-in-out infinite; }
+  </style>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- BACKGROUND & TECH GRID                 -->
+  <!-- ══════════════════════════════════════ -->
+  <rect width="512" height="512" rx="96" fill="url(#bg)" />
+  <rect width="512" height="512" rx="96" fill="url(#gridPattern)" />
+  <rect class="border-ring" width="512" height="512" rx="96" fill="none" stroke="url(#bdr)" stroke-width="2.5" />
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- BACKGROUND TECH HUD LAYERS             -->
+  <!-- ══════════════════════════════════════ -->
+  <!-- Slow-rotating circular tech HUD group -->
+  <g transform="translate(256, 260)">
+    <circle cx="0" cy="0" r="160" fill="none" stroke="#FFFFFF" stroke-width="0.8" stroke-dasharray="4,12" opacity="0.07" />
+    <circle cx="0" cy="0" r="165" fill="none" stroke="#06B6D4" stroke-width="0.5" stroke-dasharray="20,180" opacity="0.12" />
+    <circle cx="0" cy="0" r="200" fill="none" stroke="#FFFFFF" stroke-width="0.5" stroke-dasharray="10,30,80,40" opacity="0.08" />
+    <animateTransform attributeName="transform" type="rotate" from="0" to="-360" dur="40s" repeatCount="indefinite" additive="sum" />
+  </g>
+
+  <!-- Static circular outer ring and crosshairs -->
+  <circle cx="256" cy="260" r="220" fill="none" stroke="url(#flowGrad)" stroke-width="1" stroke-dasharray="2,12" opacity="0.15" />
+  <line x1="80" y1="84" x2="432" y2="436" stroke="#FFFFFF" stroke-width="0.5" stroke-dasharray="6,12" opacity="0.04" />
+  <line x1="80" y1="436" x2="432" y2="84" stroke="#FFFFFF" stroke-width="0.5" stroke-dasharray="6,12" opacity="0.04" />
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- AMBIENT GLOWS                         -->
+  <!-- ══════════════════════════════════════ -->
+  <ellipse class="amb-gold" cx="400" cy="100" rx="140" ry="110" fill="#F3BA2F" opacity="0.08" filter="url(#gB)" />
+  <ellipse class="amb-cyan" cx="400" cy="420" rx="140" ry="110" fill="#06B6D4" opacity="0.08" filter="url(#gB)" />
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- PRISM FLOOR SHADOW & REFLECTION        -->
+  <!-- ══════════════════════════════════════ -->
+  <ellipse cx="256" cy="396" rx="95" ry="15" fill="#000000" opacity="0.55" filter="url(#gB)" />
+  <ellipse cx="256" cy="396" rx="65" ry="8" fill="#06B6D4" opacity="0.15" filter="url(#gB)" />
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- WHITE INPUT BEAM                       -->
+  <!-- ══════════════════════════════════════ -->
+  <g class="input-beam">
+    <polygon points="220,248 38,206 38,218" fill="url(#whiteB)" opacity="0.45" />
+    <polygon points="220,272 38,302 38,290" fill="url(#whiteB)" opacity="0.45" />
+    <line x1="220" y1="260" x2="38" y2="254" stroke="#FFFFFF" stroke-width="2.2" opacity="0.35" filter="url(#gS)" />
+  </g>
+  <!-- Input particles -->
+  <circle class="p-input-1" r="2.5" fill="#FFFFFF" filter="url(#particleGlow)" />
+  <circle class="p-input-2" r="2" fill="#FFFFFF" filter="url(#particleGlow)" />
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- VOLUMETRIC GOLD BEAM                   -->
+  <!-- ══════════════════════════════════════ -->
+  <g class="gold-beam">
+    <polygon points="286,228 468,68 468,140" fill="url(#goldB)" opacity="0.15" filter="url(#gB)" />
+    <polygon points="286,228 468,68 468,140" fill="url(#goldB)" opacity="0.85" />
+    <line x1="286" y1="228" x2="468" y2="104" stroke="#FFE57F" stroke-width="2.5" opacity="0.75" filter="url(#gS)" />
+    <line x1="286" y1="228" x2="468" y2="104" stroke="url(#goldEdge)" stroke-width="1" opacity="0.5" />
+    <polygon points="292,224 468,76 468,108" fill="#FFE57F" opacity="0.12" />
+  </g>
+  <!-- Gold particles -->
+  <circle class="p-gold-1" r="2.5" fill="#FFE57F" filter="url(#particleGlow)" />
+  <circle class="p-gold-2" r="2.5" fill="#FFD966" filter="url(#particleGlow)" />
+  <circle class="p-gold-3" r="2" fill="#FFFBE6" filter="url(#particleGlow)" />
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- VOLUMETRIC CYAN BEAM                   -->
+  <!-- ══════════════════════════════════════ -->
+  <g class="cyan-beam">
+    <polygon points="286,292 468,384 468,452" fill="url(#cyanB)" opacity="0.15" filter="url(#gB)" />
+    <polygon points="286,292 468,384 468,452" fill="url(#cyanB)" opacity="0.85" />
+    <line x1="286" y1="292" x2="468" y2="418" stroke="#67E8F9" stroke-width="2.5" opacity="0.75" filter="url(#gS)" />
+    <line x1="286" y1="292" x2="468" y2="418" stroke="url(#cyanEdge)" stroke-width="1" opacity="0.5" />
+    <polygon points="292,296 468,412 468,444" fill="#67E8F9" opacity="0.12" />
+  </g>
+  <!-- Cyan particles -->
+  <circle class="p-cyan-1" r="2.5" fill="#67E8F9" filter="url(#particleGlow)" />
+  <circle class="p-cyan-2" r="2.5" fill="#22D3EE" filter="url(#particleGlow)" />
+  <circle class="p-cyan-3" r="2" fill="#ECFEFF" filter="url(#particleGlow)" />
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- THE PRISM                              -->
+  <!-- ══════════════════════════════════════ -->
+  <g class="prism">
+    <!-- Chromatic Dispersion Splitting Wedges -->
+    <polygon points="220,260 286,215 258,260" fill="url(#internalRed)" />
+    <polygon points="220,260 286,230 258,260" fill="url(#internalGold)" />
+    <polygon points="220,260 286,260 258,260" fill="url(#internalGreen)" />
+    <polygon points="220,260 286,290 258,260" fill="url(#internalCyan)" />
+    <polygon points="220,260 286,305 258,260" fill="url(#internalPurple)" />
+
+    <!-- Semi-transparent Glass faces -->
+    <polygon points="258,136 186,316 258,386" fill="url(#fL)" />
+    <polygon points="258,136 330,316 258,386" fill="url(#fR)" />
+    <polygon points="186,316 330,316 258,386" fill="url(#fBt)" />
+
+    <!-- Specular static overlay -->
+    <polygon points="258,150 322,310 258,375" fill="url(#iriR)" />
+
+    <!-- Animated sweep glint -->
+    <polygon class="iri-sweep" points="258,136 330,316 258,386" fill="url(#iriSweep)" />
+
+    <!-- Outer Edge lines -->
+    <line x1="258" y1="136" x2="186" y2="316" stroke="#FFFFFF" stroke-width="1.5" opacity="0.22" />
+    <line x1="258" y1="136" x2="330" y2="316" stroke="#FFFFFF" stroke-width="2" opacity="0.32" />
+    <line x1="186" y1="316" x2="258" y2="386" stroke="#FFFFFF" stroke-width="1.2" opacity="0.1" />
+    <line x1="330" y1="316" x2="258" y2="386" stroke="#FFFFFF" stroke-width="1.2" opacity="0.1" />
+    <line x1="186" y1="316" x2="330" y2="316" stroke="#FFFFFF" stroke-width="1.5" opacity="0.18" />
+
+    <!-- Beveled Outline Frames (Enhances 3D Facet Structure) -->
+    <polygon points="258,136 186,316 258,386" fill="none" stroke="#FFFFFF" stroke-width="1" opacity="0.12" />
+    <polygon points="258,136 330,316 258,386" fill="none" stroke="#FFFFFF" stroke-width="1" opacity="0.12" />
+
+    <!-- Specular Center Ridge (Vertical Neon Specular) -->
+    <line x1="258" y1="136" x2="258" y2="386" stroke="#FFFFFF" stroke-width="2" opacity="0.55" filter="url(#gS)" />
+
+    <!-- Internal refraction line -->
+    <line x1="258" y1="156" x2="258" y2="366" stroke="#FFFFFF" stroke-width="0.8" opacity="0.12" />
+
+    <!-- Right face highlight stripe -->
+    <polygon points="262,160 310,300 262,365" fill="#FFFFFF" opacity="0.03" />
+  </g>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- QUANTUM ENGINE CORE (Rotating HUD Core)-->
+  <!-- ══════════════════════════════════════ -->
+  <g filter="url(#gC)" transform="translate(272, 260)">
+    <!-- Tech core pulsing gold/cyan gradient -->
+    <circle class="core" cx="0" cy="0" r="11" fill="url(#flowGrad)" opacity="0.75" />
+    
+    <!-- Rotating Gold Triangle (CW) -->
+    <g>
+      <polygon points="0,-10 8.66,5 -8.66,5" fill="#FFE57F" opacity="0.9" />
+      <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="6s" repeatCount="indefinite" />
+    </g>
+    
+    <!-- Rotating Cyan Triangle (CCW) -->
+    <g>
+      <polygon points="0,10 8.66,-5 -8.66,-5" fill="#67E8F9" opacity="0.9" />
+      <animateTransform attributeName="transform" type="rotate" from="0" to="-360" dur="6s" repeatCount="indefinite" />
+    </g>
+
+    <!-- Center white focus point -->
+    <circle cx="0" cy="0" r="3" fill="#FFFFFF" />
+
+    <!-- Rotating tech orbital ring -->
+    <g>
+      <circle cx="0" cy="0" r="18" fill="none" stroke="#FFFFFF" stroke-width="1.2" stroke-dasharray="6,4" opacity="0.5" />
+      <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="12s" repeatCount="indefinite" />
+    </g>
+  </g>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- TRIPLE LENS FLARES                     -->
+  <!-- ══════════════════════════════════════ -->
+  <!-- Top vertex flare -->
+  <g transform="translate(258, 136)" filter="url(#gF)">
+    <g>
+      <animateTransform attributeName="transform" type="scale" values="0.85;1.45;0.85" keyTimes="0;0.5;1" dur="3s" repeatCount="indefinite" additive="sum" />
+      <g>
+        <animateTransform attributeName="transform" type="rotate" from="0" to="90" dur="3s" repeatCount="indefinite" />
+        <circle cx="0" cy="0" r="3.5" fill="#FFFFFF" opacity="0.75" />
+        <line x1="-14" y1="0" x2="14" y2="0" stroke="#FFFFFF" stroke-width="1.2" opacity="0.5" />
+        <line x1="0" y1="-14" x2="0" y2="14" stroke="#FFFFFF" stroke-width="1.2" opacity="0.5" />
+        <line x1="-8" y1="-8" x2="8" y2="8" stroke="#FFFFFF" stroke-width="0.6" opacity="0.3" />
+        <line x1="8" y1="-8" x2="-8" y2="8" stroke="#FFFFFF" stroke-width="0.6" opacity="0.3" />
+      </g>
+    </g>
+  </g>
+
+  <!-- Bottom vertex flare -->
+  <g transform="translate(258, 386)" filter="url(#gF)">
+    <g>
+      <animateTransform attributeName="transform" type="scale" values="0.85;1.45;0.85" keyTimes="0;0.5;1" dur="3s" repeatCount="indefinite" additive="sum" />
+      <g>
+        <animateTransform attributeName="transform" type="rotate" from="0" to="-90" dur="3s" repeatCount="indefinite" />
+        <circle cx="0" cy="0" r="3" fill="#FFFFFF" opacity="0.65" />
+        <line x1="-12" y1="0" x2="12" y2="0" stroke="#FFFFFF" stroke-width="1" opacity="0.45" />
+        <line x1="0" y1="-12" x2="0" y2="12" stroke="#FFFFFF" stroke-width="1" opacity="0.45" />
+      </g>
+    </g>
+  </g>
+
+  <!-- Core flare -->
+  <g transform="translate(272, 260)" filter="url(#gF)">
+    <g>
+      <animateTransform attributeName="transform" type="scale" values="0.8;1.3;0.8" keyTimes="0;0.5;1" dur="2s" repeatCount="indefinite" additive="sum" />
+      <g>
+        <animateTransform attributeName="transform" type="rotate" from="0" to="90" dur="2s" repeatCount="indefinite" />
+        <circle cx="0" cy="0" r="2.5" fill="#FFFFFF" opacity="0.85" />
+        <line x1="-10" y1="0" x2="10" y2="0" stroke="#FFFFFF" stroke-width="0.8" opacity="0.55" />
+        <line x1="0" y1="-10" x2="0" y2="10" stroke="#FFFFFF" stroke-width="0.8" opacity="0.55" />
+      </g>
+    </g>
+  </g>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- SPECTRAL HINTS                        -->
+  <!-- ══════════════════════════════════════ -->
+  <g class="spectral">
+    <line x1="280" y1="244" x2="300" y2="234" stroke="#EF4444" stroke-width="1.2" opacity="0.18" />
+    <line x1="282" y1="248" x2="302" y2="238" stroke="#F97316" stroke-width="1" opacity="0.12" />
+    <line x1="280" y1="276" x2="300" y2="286" stroke="#8B5CF6" stroke-width="1.2" opacity="0.18" />
+    <line x1="282" y1="272" x2="302" y2="282" stroke="#3B82F6" stroke-width="1" opacity="0.12" />
+  </g>
+</svg>
