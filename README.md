@@ -156,6 +156,30 @@ We have made Bourse fully **reproducible and testable offline**. Judges can run 
     ```
     *(For offline demo runs, the default dummy values in `.env` are sufficient. For live runs, populate your `CMC_PRO_API_KEY` or `CMC_MCP_API_KEY` and a BSC-testnet private key).*
 
+### 🔌 Expose Bourse to Claude Desktop (MCP Server Setup)
+
+Bourse can run as a local stdio Model Context Protocol (MCP) server. This allows **Claude Desktop** to directly call Bourse tools (Divergence board, Token signals, and Backtests) in chat.
+
+Add the following config to your `claude_desktop_config.json` (on macOS, located at `~/Library/Application Support/Claude/claude_desktop_config.json`):
+
+```json
+{
+  "mcpServers": {
+    "bourse": {
+      "command": "/absolute/path/to/bourse/.venv/bin/python3",
+      "args": [
+        "/absolute/path/to/bourse/scripts/mcp_server.py"
+      ]
+    }
+  }
+}
+```
+
+Once added, restart Claude Desktop and you can query:
+* *"Show me the Bourse divergence board"*
+* *"Bourse, where is social hype most disconnected from smart money right now?"*
+* *"Run a backtest for CAKE"*
+
 ### Verification Commands
 
 ```bash
