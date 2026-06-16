@@ -91,7 +91,7 @@ def run_simulation_thread(password: str, private_key: str, provider_address: str
         
         # Wait for provider App to process
         state.add_log("6. Waiting for Bourse provider agent to submit signal...")
-        for i in range(15):
+        for i in range(30):
             time.sleep(2)
             st = client.get_job_status(job_id)
             state.add_log(f"   Job status: {st.name}")

@@ -361,6 +361,16 @@ def test_check_readiness_main(monkeypatch):
     monkeypatch.setattr(check_submission_readiness, "pytest_count", lambda: 161)
     monkeypatch.setattr(check_submission_readiness, "pytest_passes", lambda: True)
     monkeypatch.setattr(check_submission_readiness, "is_tracked", lambda path: path != ".env")
+    monkeypatch.setattr(check_submission_readiness, "update_readme_test_count", lambda x: None)
+    
+    original_read = check_submission_readiness.read
+    def mock_read(p):
+        content = original_read(p)
+        if "README.md" in p:
+            content = content.replace("pytest-213_passing", "pytest-161_passing")
+            content = content.replace("pytest (213 tests)", "pytest (161 tests)")
+        return content
+    monkeypatch.setattr(check_submission_readiness, "read", mock_read)
     
     mock_exit = MagicMock()
     with patch("sys.exit", mock_exit):
@@ -380,17 +390,33 @@ def test_check_submission_readiness_real_functions():
             mock_res.returncode = 0
         return mock_res
 
+    original_open = open
+    def mock_open(file, mode="r", *args, **kwargs):
+        if "w" in mode:
+            return MagicMock()
+        if "README.md" in str(file):
+            with original_open(file, "r", *args, **kwargs) as f:
+                content = f.read()
+            content = content.replace("pytest-213_passing", "pytest-161_passing")
+            content = content.replace("pytest (213 tests)", "pytest (161 tests)")
+            m = MagicMock()
+            m.read.return_value = content
+            m.__enter__.return_value = m
+            return m
+        return original_open(file, mode, *args, **kwargs)
+
     with patch("subprocess.run", side_effect=mock_run_cmd):
         assert check_submission_readiness.is_tracked("README.md") is True
         assert check_submission_readiness.is_tracked(".env") is False
         assert check_submission_readiness.pytest_count() == 161
         assert check_submission_readiness.pytest_passes() is True
         
-        with patch("sys.exit") as mock_exit:
+        with patch("sys.exit") as mock_exit, patch("builtins.open", mock_open):
             spec = importlib.util.spec_from_file_location("__main__", os.path.join(ROOT, "scripts", "check_submission_readiness.py"))
             m = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(m)
             mock_exit.assert_called_once_with(0)
+
 
 
 def test_check_submission_readiness_exceptions():
