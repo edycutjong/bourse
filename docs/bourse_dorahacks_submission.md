@@ -16,6 +16,12 @@ This document contains the complete details required for the DoraHacks BUIDL sub
 *   **Innovation Domains**: `Crypto-AI` · `DeFi` · `Infra / API` · `Security` · `Token Economics Innovation`
 *   **Layer-1 Deployment**: `BNB Chain`
 *   **Other open source ecosystems**: `Metamask`
+*   **Is this BUIDL an AI Agent?**: `Yes`
+    *   *Agentic Capabilities*:
+        1. **Autonomous Perception**: Ingests market states by calling CoinMarketCap Agent Hub (MCP) tools dynamically.
+        2. **On-Chain Identity & Autonomy**: Registered via **ERC-8004** on BSC Testnet (mega-fueled, gas-free registration) as `Agent ID: 1401`. It runs as an autonomous server daemon listening for and negotiating service jobs.
+        3. **Reasoning & Synthesis**: Automatically нормализует multi-source data into rolling z-scores, matches regime matrices, and outputs actionable signed strategy specifications.
+        4. **Machine-to-Machine Commerce**: Operates a two-sided financial logic. It pays to consume data via **x402 (EIP-3009)** on Base network, and programmatically earns tokens by selling strategy deliverables via **ERC-8183 escrows** on BSC Testnet.
 
 ---
 
