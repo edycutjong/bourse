@@ -848,7 +848,7 @@ def test_run_divergence_mcp_path(monkeypatch):
     monkeypatch.setenv("CMC_MCP_API_KEY", "mock_key")
     # 1. Test from_mcp success
     with patch("app.from_mcp", return_value=MagicMock()) as mock_mcp:
-        with patch("app.compute", return_value=MagicMock()) as mock_compute:
+        with patch("app.compute", return_value=MagicMock()):
             with patch("app.build_spec", return_value={"backtest": {"sharpe": 1.0}}):
                 res = app.run_divergence({"token": "CAKE"})
                 assert isinstance(res, dict)
