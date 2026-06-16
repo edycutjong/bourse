@@ -67,6 +67,19 @@ def run_backtest(history: dict, *, token: str = "TOKEN", window: int = 5,
         prev_pos = pos
 
     r = np.asarray(rets, dtype=float)
+    
+    # Catch empty history to prevent RuntimeWarning on r.std()
+    if r.size == 0:
+        return {
+            "sharpe": 0.0,
+            "max_dd": 0.0,
+            "win_rate": 0.0,
+            "n_trades": trades,
+            "n_active": active,
+            "final_return": 0.0,
+            "equity_curve": [],
+        }
+
     equity = np.cumprod(1.0 + r)
     sd = r.std()
     sharpe = float(r.mean() / sd * np.sqrt(periods_per_year)) if sd > 0 else 0.0

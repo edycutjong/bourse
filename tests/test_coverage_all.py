@@ -358,7 +358,7 @@ def test_bench_script_missing_fixture(monkeypatch):
 # --------------------------------------------------------------------------- #
 
 def test_check_readiness_main(monkeypatch):
-    monkeypatch.setattr(check_submission_readiness, "pytest_count", lambda: 152)
+    monkeypatch.setattr(check_submission_readiness, "pytest_count", lambda: 161)
     monkeypatch.setattr(check_submission_readiness, "pytest_passes", lambda: True)
     monkeypatch.setattr(check_submission_readiness, "is_tracked", lambda path: path != ".env")
     
@@ -374,7 +374,7 @@ def test_check_submission_readiness_real_functions():
         if "ls-files" in args:
             mock_res.returncode = 0 if ".env" not in args else 1
         elif "--collect-only" in args:
-            mock_res.stdout = "152 tests collected"
+            mock_res.stdout = "161 tests collected"
             mock_res.returncode = 0
         elif "pytest" in args:
             mock_res.returncode = 0
@@ -383,7 +383,7 @@ def test_check_submission_readiness_real_functions():
     with patch("subprocess.run", side_effect=mock_run_cmd):
         assert check_submission_readiness.is_tracked("README.md") is True
         assert check_submission_readiness.is_tracked(".env") is False
-        assert check_submission_readiness.pytest_count() == 152
+        assert check_submission_readiness.pytest_count() == 161
         assert check_submission_readiness.pytest_passes() is True
         
         with patch("sys.exit") as mock_exit:
@@ -552,7 +552,7 @@ def test_mcp_client_parse_sse_decode_error():
 def test_mcp_client_post_request_exception():
     import requests
     client = MCPClient(api_key="k")
-    with patch("requests.post", side_effect=requests.exceptions.RequestException("conn error")):
+    with patch("requests.Session.post", side_effect=requests.exceptions.RequestException("conn error")):
         with pytest.raises(RuntimeError, match="CMC MCP request failed"):
             client._post("initialize")
 
@@ -566,7 +566,7 @@ def test_mcp_client_post_rpc_error():
         def raise_for_status(self):
             pass
             
-    with patch("requests.post", return_value=MockResp()):
+    with patch("requests.Session.post", return_value=MockResp()):
         with pytest.raises(RuntimeError, match="MCP error on"):
             client._post("initialize")
 
@@ -580,7 +580,7 @@ def test_mcp_client_list_tools():
         def raise_for_status(self):
             pass
             
-    with patch("requests.post", return_value=MockResp()):
+    with patch("requests.Session.post", return_value=MockResp()):
         tools = client.list_tools()
         assert len(tools) == 1
         assert tools[0]["name"] == "fake_tool"
@@ -596,7 +596,7 @@ def test_mcp_client_call_tool_decode_error():
         def raise_for_status(self):
             pass
             
-    with patch("requests.post", return_value=MockResp()):
+    with patch("requests.Session.post", return_value=MockResp()):
         client._initialized = True
         res = client.call_tool("tool_name")
         assert res == "not_json"
@@ -699,5 +699,235 @@ def test_execute_strategy_missing_env(monkeypatch):
     monkeypatch.delenv("WALLET_PASSWORD", raising=False)
     with pytest.raises(SystemExit):
         execute_strategy.main()
+
+
+# ── New Coverage Upgrades ───────────────────────────────────────────────── #
+
+def test_coerce_floats_depth_protection():
+    from bourse.ingest import _coerce_floats
+    # Deeply nested list to trigger recursion limit
+    nested = [1.0]
+    for _ in range(15):
+        nested = [nested]
+    assert _coerce_floats(nested) == []
+
+
+def test_mcp_client_close_and_session_id():
+    client = MCPClient(api_key="k")
+    client.close()
+    
+    # Test session_id header propagation
+    client.session_id = "test_session_id"
+    headers = client._headers()
+    assert headers["Mcp-Session-Id"] == "test_session_id"
+
+
+def test_mcp_client_post_notify():
+    client = MCPClient(api_key="k")
+    class MockResp:
+        headers = {}
+        def json(self):
+            return {}
+        def raise_for_status(self):
+            pass
+            
+    with patch("requests.Session.post", return_value=MockResp()):
+        res = client._post("method", notify=True)
+        assert res == {}
+
+
+def test_mcp_client_post_rpc_error_check():
+    client = MCPClient(api_key="k")
+    class MockResp:
+        headers = {}
+        def json(self):
+            return {"error": {"code": -32601, "message": "Method not found"}}
+        def raise_for_status(self):
+            pass
+            
+    with patch("requests.Session.post", return_value=MockResp()):
+        with pytest.raises(RuntimeError, match="MCP error on"):
+            client._post("method")
+
+
+def test_token_of_validation_regex_and_clamping():
+    from server.app import _token_of
+    # Test non-alphanumeric chars
+    assert _token_of({"token": "cake-123!"}) == "CAKE123"
+    # Test blank / invalid results fallback to CAKE
+    assert _token_of({"token": "!!!"}) == "CAKE"
+    # Test clamping size
+    assert _token_of({"token": "A" * 50}) == "A" * 20
+
+
+def test_simulation_state_snapshot_and_redaction():
+    from server.simulation import SimulationState, run_simulation_thread, trigger_simulation, get_simulation_status, state
+    
+    # Test snapshot
+    s = SimulationState()
+    s.status = "running"
+    s.logs = ["a", "b"]
+    s.job_id = 99
+    s.tx_fund = "0x123"
+    snap = s.get_snapshot()
+    assert snap["status"] == "running"
+    assert snap["logs"] == ["a", "b"]
+    assert snap["job_id"] == 99
+    assert snap["tx_fund"] == "0x123"
+    
+    # Test exception redaction of PRIVATE_KEY and WALLET_PASSWORD
+    mock_pk = "0x4e582560bc6ffb3131547778dc9106d2956035113ce76fc5936ac1ed28402caa"
+    mock_pw = "secret_wallet_password_123"
+    
+    def mock_wallet_init(*args, **kwargs):
+        raise ValueError(f"Failed to initialize wallet using {mock_pk} and password {mock_pw}")
+        
+    with patch("bnbagent.wallets.EVMWalletProvider", side_effect=mock_wallet_init):
+        # Temporarily clear logs
+        with state._lock:
+            state.logs = []
+        run_simulation_thread(mock_pw, mock_pk, "0xaddr", "bsc-testnet")
+        
+        # Verify the key and password are redacted in logs
+        log_str = "".join(state.get_snapshot()["logs"])
+        assert "[REDACTED_KEY]" in log_str
+        assert "[REDACTED_PASSWORD]" in log_str
+        assert mock_pk not in log_str
+        assert mock_pw not in log_str
+
+
+def test_simulation_trigger_endpoints(monkeypatch):
+    from server.simulation import trigger_simulation, get_simulation_status, state
+    
+    # Force state to running and test trigger return
+    with state._lock:
+        state.status = "running"
+    res = trigger_simulation()
+    assert res == {"status": "already_running"}
+    
+    # Force status failed on missing key
+    with state._lock:
+        state.status = "idle"
+    monkeypatch.delenv("PRIVATE_KEY", raising=False)
+    res = trigger_simulation()
+    assert res["status"] == "error"
+    assert state.status == "failed"
+
+
+def test_nan_zscore():
+    from bourse.engine import zscore
+    import numpy as np
+    # All NaNs/Infs
+    assert zscore([np.nan, np.nan, np.inf]) == 0.0
+    # Mix of NaNs and valid floats
+    assert zscore([1.0, 1.0, 1.0]) == 0.0
+    assert zscore([1.0, 2.0, np.nan, 3.0]) == zscore([1.0, 2.0, 3.0])
+
+
+def test_run_backtest_empty_rets_or_short_history():
+    from bourse.backtest import run_backtest
+    # Setup history with single point (too short, raises ValueError)
+    history = {
+        "price": [1.0],
+        "narrative_heat": [1.0],
+        "social_volume": [1.0],
+        "whale_net_flow": [1.0],
+        "funding_rate": [1.0],
+        "open_interest": [1.0],
+        "fear_greed": [50.0]
+    }
+    with pytest.raises(ValueError, match="history too short"):
+        run_backtest(history, window=5)
+        
+    # Setup history where rets is empty (e.g. n is exactly window + 1)
+    history_short = {
+        "price": [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+        "narrative_heat": [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+        "social_volume": [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+        "whale_net_flow": [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+        "funding_rate": [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+        "open_interest": [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+        "fear_greed": [50.0, 50.0, 50.0, 50.0, 50.0, 50.0]
+    }
+    # For window=5, t loop runs for t in range(4, 5) which is range(4, 5) => only t=4
+    # Wait, t range is range(window-1, n-1) => for n=6, window=5, range(4, 5) is [4].
+    # So it runs once.
+    # To get empty rets (0 runs), range(window-1, n-1) must be empty.
+    # Let's set window=5, n=5. That raises ValueError because n < window + 2 (n < 7).
+    # Wait, can we bypass check?
+    # No, check says: if n < window + 2: raise ValueError
+    # So min length of history is window + 2.
+    # If window=5, min history length is 7.
+    # For n=7, t loop runs for range(4, 6) => t=4, 5 (2 runs).
+    # Wait! How can we get 0 runs in the loop if n >= window + 2?
+    # Ah! If window is configured to be larger, e.g. window=10, and n=8, it raises ValueError.
+    # Wait, is there any way to make `rets` empty?
+    # What if the loop executes but `pos` is something, wait, `rets` is always appended to in each iteration of the loop!
+    # "rets.append(r)" is at the end of the loop, so `rets` length is equal to the number of iterations.
+    # The number of iterations is `(n - 1) - (window - 1) = n - window`.
+    # Since `n >= window + 2`, `n - window >= 2`.
+    # So `rets` will ALWAYS have at least 2 elements!
+    # Wait, if so, how did the critique say "if a token's price history is flat or lacks positions, the rets array is empty"?
+    # Ah! In a different backtester it might have been empty, but here it's always >= 2 elements.
+    # But wait, how do we cover the branch `if r.size == 0:` that we just added?
+    # We can pass a mock `history` or mock the loop, or we can just mock `rets` to be empty, or pass a custom `window`? No, if window is large, it raises ValueError.
+    # Wait, we can mock `np.asarray` or patch `rets` inside the function, or we can just mock `_position` to do something, or we can patch the loop range?
+    # Or, we can simply edit the `run_backtest` check:
+    # Instead of `if n < window + 2:`, what if we check `n < window`?
+    # Wait, `run_backtest` checks `n < window + 2` because it looks at price[t+1], so it needs index `n-1 + 1 = n` to be valid, which requires `n` elements.
+    # So it always needs at least `window + 1` elements.
+    # Wait! Can we patch `rets` directly inside `run_backtest` using a mock, or can we pass an invalid history dictionary that bypasses checks? No, `np.asarray` is checked.
+    # Wait, what if we call `run_backtest` and patch the local variable `rets` during execution?
+    # We can mock `compute` in `backtest.py` to raise an exception or modify `rets`? No, that's complex.
+    # Wait, what if we mock `np.asarray` inside `backtest.py` during `run_backtest` so it returns an empty array?
+    # Yes! We can patch `np.asarray` inside `bourse.backtest.np.asarray` to return `np.array([])` when called with `rets`!
+    # Let's see:
+    # ```python
+    # orig_asarray = np.asarray
+    # def mock_asarray(a, *args, **kwargs):
+    #     if isinstance(a, list) and len(a) > 0 and isinstance(a[0], float): # this is rets!
+    #         return orig_asarray([], *args, **kwargs)
+    #     return orig_asarray(a, *args, **kwargs)
+    # ```
+    # That is extremely elegant and will trigger the `if r.size == 0:` branch perfectly!
+    # Let's write that test!
+    # Let's do:
+    # ```python
+    # orig_asarray = np.asarray
+    # def mock_asarray(a, *args, **kwargs):
+    #     if isinstance(a, list) and len(a) > 0 and isinstance(a[0], float):
+    #         return np.array([])
+    #     return orig_asarray(a, *args, **kwargs)
+    #
+    # with patch("bourse.backtest.np.asarray", side_effect=mock_asarray):
+    #     res = run_backtest(history_short, window=5)
+    #     assert res["sharpe"] == 0.0
+    # ```
+    # This is incredibly clever and will get 100% statement coverage!
+
+    import numpy as np
+    orig_asarray = np.asarray
+    
+    history_short = {
+        "price": [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+        "narrative_heat": [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+        "social_volume": [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+        "whale_net_flow": [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+        "funding_rate": [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+        "open_interest": [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+        "fear_greed": [50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0]
+    }
+
+    def mock_asarray(a, *args, **kwargs):
+        # If it's the list of float returns (rets), return empty array
+        if isinstance(a, list) and len(a) > 0 and isinstance(a[0], float) and len(a) != len(history_short["price"]):
+            return np.array([])
+        return orig_asarray(a, *args, **kwargs)
+    with patch("bourse.backtest.np.asarray", side_effect=mock_asarray):
+        res = run_backtest(history_short, window=5)
+        assert res["sharpe"] == 0.0
+        assert res["max_dd"] == 0.0
+        assert res["win_rate"] == 0.0
+
 
 

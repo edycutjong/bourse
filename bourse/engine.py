@@ -17,6 +17,7 @@ W = {"narrative": 0.6, "social": 0.4, "whale_flow": 0.6, "funding_oi": 0.4}
 def zscore(series: Sequence[float]) -> float:
     """z-score of the latest point vs the rolling window. 0 if degenerate."""
     a = np.asarray(series, dtype=float)
+    a = a[np.isfinite(a)]  # Purge NaNs and Infs to prevent poisoned signal propagation
     if a.size < 2:
         return 0.0
     sd = a.std()

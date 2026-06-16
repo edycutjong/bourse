@@ -14,6 +14,7 @@ from __future__ import annotations
 import json
 import os
 import sys
+import re
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from bourse import compute, build_spec, run_backtest
 from bourse.ingest import from_fixture, from_mcp
@@ -40,7 +41,11 @@ def _token_of(job: dict) -> str:
     signal' on-chain, so take the first word; fall back to an explicit `token` key."""
     raw = job.get("token") or job.get("description") or "CAKE"
     parts = str(raw).split()
-    return (parts[0] if parts else "CAKE").upper()
+    token = (parts[0] if parts else "CAKE").upper()
+    
+    # Strip non-alphanumeric chars to prevent payload injection and clamp size
+    token = re.sub(r"[^A-Z0-9]", "", token)
+    return token[:20] if token else "CAKE"
 
 
 def run_divergence(job: dict) -> dict:

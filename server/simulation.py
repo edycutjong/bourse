@@ -14,6 +14,16 @@ class SimulationState:
         self.tx_fund = None
         self._lock = threading.Lock()
 
+    def get_snapshot(self) -> dict:
+        """Safely extract state for JSON serialization without race conditions."""
+        with self._lock:
+            return {
+                "status": self.status,
+                "logs": list(self.logs),
+                "job_id": self.job_id,
+                "tx_fund": self.tx_fund
+            }
+
     def reset(self):
         with self._lock:
             self.status = "idle"
@@ -119,13 +129,24 @@ def run_simulation_thread(password: str, private_key: str, provider_address: str
         state.add_log("❌ Timeout waiting for Bourse provider to submit the signal.")
         
     except Exception as e:
+        err_msg = str(e)
+        if private_key and private_key in err_msg:
+            err_msg = err_msg.replace(private_key, "[REDACTED_KEY]")
+        if password and password in err_msg:
+            err_msg = err_msg.replace(password, "[REDACTED_PASSWORD]")
+            
         state.set_status("failed")
-        state.add_log(f"💥 Simulation failed: {str(e)}")
+        state.add_log(f"💥 Simulation failed: {err_msg}")
 
 @router.post("/simulate-buyer")
 def trigger_simulation():
-    if state.status == "running":
-        return {"status": "already_running"}
+    with state._lock:
+        if state.status == "running":
+            return {"status": "already_running"}
+        state.status = "running"
+        state.logs = []
+        state.job_id = None
+        state.tx_fund = None
     
     password = os.environ.get("WALLET_PASSWORD", "secret")
     private_key = os.environ.get("PRIVATE_KEY")
@@ -133,11 +154,9 @@ def trigger_simulation():
     network = os.environ.get("NETWORK", "bsc-testnet")
     
     if not private_key:
+        state.set_status("failed")
         return {"status": "error", "message": "PRIVATE_KEY environment variable is not configured."}
         
-    state.reset()
-    state.set_status("running")
-    
     # Spawn thread
     t = threading.Thread(target=run_simulation_thread, args=(password, private_key, provider, network))
     t.daemon = True
@@ -147,12 +166,7 @@ def trigger_simulation():
 
 @router.get("/simulate-buyer/status")
 def get_simulation_status():
-    return {
-        "status": state.status,
-        "logs": state.logs,
-        "job_id": state.job_id,
-        "tx_fund": state.tx_fund
-    }
+    return state.get_snapshot()
 
 @router.get("/info")
 def get_info():

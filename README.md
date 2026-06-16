@@ -11,7 +11,7 @@
 
   <br/>
 
-  [![Tests](https://img.shields.io/badge/pytest-152_passing-22c55e?style=flat)](./Makefile#L63)
+  [![Tests](https://img.shields.io/badge/pytest-161_passing-22c55e?style=flat)](./Makefile#L63)
   ![Python](https://img.shields.io/badge/Python_3.11+-3776AB?style=flat&logo=python&logoColor=white)
   ![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=flat&logo=fastapi&logoColor=white)
   [![CI](https://github.com/edycutjong/bourse/actions/workflows/ci.yml/badge.svg)](https://github.com/edycutjong/bourse/actions/workflows/ci.yml)
@@ -149,7 +149,7 @@ make signal-cake     # Generate 4-plane "why" details + spec + backtest for CAKE
 make backtest        # Run walk-forward backtest and view ASCII equity curve
 python scripts/optimize_weights.py   # Run grid search optimizer on engine weights (Sharpe goes from 1.74 to 6.28)
 python scripts/execute_strategy.py   # PancakeSwap V3 Strategy Execution Copilot (executes strategy on BSC Testnet)
-make test            # Run the 152-test suite and verify all pass
+make test            # Run the 161-test suite and verify all pass
 make test-coverage   # Run the test suite and display coverage report (100% lines)
 make ci              # Run the complete CI/CD checks (ruff, mypy, tests, security, readiness)
 ```
@@ -162,7 +162,7 @@ make ci              # Run the complete CI/CD checks (ruff, mypy, tests, securit
 
 ## 🧪 Testing & CI
 
-Bourse maintains **100% line coverage** across the entire core codebase (294 statements). 
+Bourse maintains **100% line coverage** across the entire core codebase (302 statements). 
 
 ### CI/CD Pipeline
 Running `make ci` executes our local validation gate:
@@ -175,7 +175,7 @@ Running `make ci` executes our local validation gate:
 | Layer | Tool | Status |
 | :--- | :--- | :--- |
 | **Code Quality** | Ruff + mypy | ✅ Passed |
-| **Unit Testing** | pytest (152 tests) | ✅ Passed (100% coverage) |
+| **Unit Testing** | pytest (161 tests) | ✅ Passed (100% coverage) |
 | **Security (SAST)** | CodeQL | ✅ Passed |
 | **Security (SCA)** | Dependabot + pip-audit | ✅ Passed |
 | **Secret Scanning** | TruffleHog | ✅ Passed |

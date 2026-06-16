@@ -26,6 +26,7 @@ from __future__ import annotations
 import json
 import os
 from typing import Any, Iterable
+import requests
 
 from .engine import Planes
 
@@ -62,8 +63,10 @@ def from_fixture(token: str, path: str) -> Planes:
 # --------------------------------------------------------------------------- #
 # helpers                                                                      #
 # --------------------------------------------------------------------------- #
-def _coerce_floats(value: Any) -> list[float]:
+def _coerce_floats(value: Any, depth: int = 0) -> list[float]:
     """Pull a numeric series out of an arbitrary JSON value. Returns [] if none."""
+    if depth > 10:  # Protect against recursive bomb payloads
+        return []
     out: list[float] = []
     if isinstance(value, (int, float)) and not isinstance(value, bool):
         return [float(value)]
@@ -76,7 +79,7 @@ def _coerce_floats(value: Any) -> list[float]:
         value = value.values()
     if isinstance(value, Iterable):
         for item in value:
-            out.extend(_coerce_floats(item))
+            out.extend(_coerce_floats(item, depth + 1))
     return out
 
 
@@ -133,6 +136,11 @@ class MCPClient:
         self.session_id: str | None = None
         self._rpc_id = 0
         self._initialized = False
+        self._session = requests.Session()
+
+    def close(self) -> None:
+        """Close the underlying session to prevent memory leaks in tests."""
+        self._session.close()
 
     def _headers(self) -> dict[str, str]:
         h = {
@@ -163,8 +171,6 @@ class MCPClient:
 
     def _post(self, method: str, params: dict | None = None,
               *, notify: bool = False) -> dict:
-        import requests
-
         body: dict[str, Any] = {"jsonrpc": "2.0", "method": method}
         if params is not None:
             body["params"] = params
@@ -172,8 +178,8 @@ class MCPClient:
             self._rpc_id += 1
             body["id"] = self._rpc_id
         try:
-            resp = requests.post(self.url, headers=self._headers(),
-                                 data=json.dumps(body), timeout=self.timeout)
+            resp = self._session.post(self.url, headers=self._headers(),
+                                      data=json.dumps(body), timeout=self.timeout)
         except requests.exceptions.RequestException as e:
             raise RuntimeError(f"CMC MCP request failed ({method}): {e}") from e
         sid = resp.headers.get("Mcp-Session-Id")
