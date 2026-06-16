@@ -1042,7 +1042,7 @@ def test_simulation_settle_endpoint(monkeypatch):
         with patch("scripts.settle.main", side_effect=Exception("error")):
             response = client.post("/api/settle/174")
             assert response.status_code == 200
-            assert response.json() == {"status": "error", "message": "error"}
+            assert response.json() == {"status": "error", "message": "Failed to settle job on-chain. Check server logs."}
 
 
 def test_nan_zscore():

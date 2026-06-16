@@ -185,5 +185,8 @@ def trigger_settle(job_id: int):
         res = settle_main(job_id)
         return {"status": "success", "tx": res.get("transactionHash")}
     except Exception as e:
-        return {"status": "error", "message": str(e)}
+        import sys
+        sys.stderr.write(f"[settle-error] Settle job {job_id} failed: {e}\n")
+        sys.stderr.flush()
+        return {"status": "error", "message": "Failed to settle job on-chain. Check server logs."}
 
