@@ -17,3 +17,11 @@ dev = ["pytest>=8.0"]
 packages = ["bourse"]
 
 # Install editable so `bourse` imports everywhere:  pip install -e .
+
+[tool.pytest.ini_options]
+filterwarnings = [
+    "ignore:.*websockets.legacy is deprecated.*:DeprecationWarning",
+    "ignore:The configuration option \"asyncio_default_fixture_loop_scope\" is unset.*:pytest.PytestDeprecationWarning",
+]
+
+
