@@ -8,10 +8,10 @@
   [![YouTube Video](https://img.shields.io/badge/▶_Demo-Video-EF4444?style=for-the-badge)](https://youtu.be/Y5YgTCEqJqw)
   [![Strategy Skill](https://img.shields.io/badge/🎯_SKILL.md-Track_2-22c55e?style=for-the-badge)](./skill/bourse/SKILL.md)
   [![Built for BNB Hackathon](https://img.shields.io/badge/DoraHacks-BNB_Hackathon_2026-F97631?style=for-the-badge)](https://dorahacks.io/hackathon/bnbhack-twt-cmc/detail)
-  [<img src="https://badge.mcpx.dev" title="MCP"/>](https://mcpx.dev)
-
+  
   <br/>
 
+  [![MCP](https://img.shields.io/badge/-MCP-black?logo=modelcontextprotocol)](https://mcpx.dev)
   [![Tests](https://img.shields.io/badge/pytest-161_passing-22c55e?style=flat)](./Makefile#L63)
   ![Python](https://img.shields.io/badge/Python_3.11+-3776AB?style=flat&logo=python&logoColor=white)
   ![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=flat&logo=fastapi&logoColor=white)
