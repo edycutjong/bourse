@@ -132,7 +132,7 @@ def test_endpoints(monkeypatch):
     with patch("scripts.settle.main", side_effect=Exception("settle error")):
         response = client.post("/api/settle/42")
         assert response.status_code == 200
-        assert response.json() == {"status": "error", "message": "settle error"}
+        assert response.json() == {"status": "error", "message": "Failed to settle job on-chain. Check server logs."}
 
 
 
