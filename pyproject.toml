@@ -22,6 +22,7 @@ packages = ["bourse"]
 filterwarnings = [
     "ignore:.*websockets.legacy is deprecated.*:DeprecationWarning",
     "ignore:The configuration option \"asyncio_default_fixture_loop_scope\" is unset.*:pytest.PytestDeprecationWarning",
+    "ignore:The 'app' shortcut is now deprecated.*:DeprecationWarning",
 ]
 
 
