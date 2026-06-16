@@ -1,16 +1,15 @@
 """Unit tests for scripts/mcp_server.py."""
 import json
 import os
-import pytest
+import sys
 import io
 from unittest.mock import MagicMock, patch
 
 # Adjust path to find the scripts
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-import sys
 sys.path.insert(0, os.path.join(ROOT, "scripts"))
 
-import mcp_server  # type: ignore
+import mcp_server  # type: ignore # noqa: E402
 
 def test_log():
     stderr = io.StringIO()
