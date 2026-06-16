@@ -64,31 +64,7 @@ def run_simulation_thread(password: str, private_key: str, provider_address: str
         state.add_log(f"   Current payment token balance: {bal / 1e18:.4f} {client.token_symbol()}")
         
         if bal < 1000000000000000000:
-            state.add_log("⚠️ Balance below 1.0 U. Calling faucet contract...")
-            faucet_address = "0x86e9197cc0f76e4e4aaa7082180945196bbab5d3"
-            faucet_abi = [
-                {"inputs":[],"name":"requestTokens","outputs":[],"stateMutability":"nonpayable","type":"function"}
-            ]
-            faucet = client.w3.eth.contract(
-                address=client.w3.to_checksum_address(faucet_address),
-                abi=faucet_abi
-            )
-            
-            tx = faucet.functions.requestTokens().build_transaction({
-                'from': wallet.address,
-                'gas': 200000,
-                'gasPrice': client.w3.eth.gas_price,
-                'nonce': client.w3.eth.get_transaction_count(wallet.address),
-            })
-            
-            signed = client.w3.eth.account.sign_transaction(tx, private_key)
-            tx_hash = client.w3.eth.send_raw_transaction(signed.raw_transaction)
-            state.add_log(f"   Faucet request tx broadcasted: {tx_hash.hex()}")
-            
-            state.add_log("   Waiting for confirmation...")
-            client.w3.eth.wait_for_transaction_receipt(tx_hash)
-            bal_after = client.token_balance()
-            state.add_log(f"   Success! Faucet funded wallet. New balance: {bal_after / 1e18:.4f} {client.token_symbol()}")
+            raise RuntimeError(f"Insufficient balance. Wallet has {bal / 1e18:.4f} {client.token_symbol()}, but requires at least 1.0 U to run the simulator. Please pre-fund address {wallet.address}")
             
         # Create Job
         state.add_log("2. Creating signal request job on-chain...")

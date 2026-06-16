@@ -15,7 +15,7 @@ data/fixtures/*.csv
 !.env.example
 
 # Generated assets
-assets/
+docs/assets/
 
 # Python build/testing cache/artifacts
 .mypy_cache/

@@ -48,6 +48,10 @@ class Signal:
     crowd: float = 0.0
     smart: float = 0.0
     reasons: list[str] = field(default_factory=list)
+    derivatives_pct: int = 50
+    whale_pct: int = 50
+    sentiment_pct: int = 50
+    technical_pct: int = 50
 
 
 def _clip100(x: float) -> float:
@@ -82,8 +86,33 @@ def compute(token: str, p: Planes, *, fade_threshold: float = 40.0) -> Signal:
         direction = "long"       # crowd fearful, smart money accumulating
 
     confidence = min(1.0, abs(divergence) / 100.0 * p.coverage + 0.0)
-    return Signal(token, round(divergence, 1), regime, direction,
-                  round(confidence, 2), round(crowd, 2), round(smart, 2), reasons)
+
+    # Compute individual plane normalized percentages (0..100)
+    avg_deriv_z = (funding_skew + oi_delta) / 2.0
+    derivatives_pct = int(max(0.0, min(100.0, 50.0 + avg_deriv_z * 20.0)))
+
+    whale_z = zscore(p.whale_net_flow)
+    whale_pct = int(max(0.0, min(100.0, 50.0 + whale_z * 20.0)))
+
+    sentiment_z = (zscore(p.narrative_heat) + zscore(p.social_volume)) / 2.0
+    sentiment_pct = int(max(0.0, min(100.0, 50.0 + sentiment_z * 20.0)))
+
+    technical_pct = int(max(0.0, min(100.0, p.fear_greed)))
+
+    return Signal(
+        token=token,
+        divergence=round(divergence, 1),
+        regime=regime,
+        direction=direction,
+        confidence=round(confidence, 2),
+        crowd=round(crowd, 2),
+        smart=round(smart, 2),
+        reasons=reasons,
+        derivatives_pct=derivatives_pct,
+        whale_pct=whale_pct,
+        sentiment_pct=sentiment_pct,
+        technical_pct=technical_pct
+    )
 
 
 def classify_regime(p: Planes, funding_skew: float, oi_delta: float) -> str:

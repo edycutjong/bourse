@@ -124,6 +124,7 @@ def build_app():  # pragma: no cover - needs bnbagent[server] + WALLET_PASSWORD
     # Serve signals.json dynamically so the board loads live data
     @app.get("/signals.json")
     def get_signals_json():
+        mcp_api_key = os.environ.get("CMC_MCP_API_KEY")
         fix_path = os.path.join(os.path.dirname(__file__), "..", "data", "fixtures", "demo.json")
         if not os.path.exists(fix_path):
             return []
@@ -133,7 +134,14 @@ def build_app():  # pragma: no cover - needs bnbagent[server] + WALLET_PASSWORD
         res = []
         for token in tokens_data.keys():
             try:
-                planes = from_fixture(token, fix_path)
+                if mcp_api_key:
+                    try:
+                        planes = from_mcp(token)
+                    except Exception:
+                        planes = from_fixture(token, fix_path)
+                else:
+                    planes = from_fixture(token, fix_path)
+                
                 s = compute(token, planes)
                 res.append({
                     "token": s.token,
@@ -141,7 +149,11 @@ def build_app():  # pragma: no cover - needs bnbagent[server] + WALLET_PASSWORD
                     "regime": s.regime,
                     "direction": s.direction,
                     "confidence": float(s.confidence),
-                    "reasons": s.reasons
+                    "reasons": s.reasons,
+                    "derivatives_pct": s.derivatives_pct,
+                    "whale_pct": s.whale_pct,
+                    "sentiment_pct": s.sentiment_pct,
+                    "technical_pct": s.technical_pct
                 })
             except Exception:
                 pass

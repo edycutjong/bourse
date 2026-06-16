@@ -729,7 +729,7 @@
         <div class="stat-label">Total Escrow Volume</div>
       </div>
       <div class="stat-card">
-        <div class="stat-val neon-green">146 / 146</div>
+        <div class="stat-val neon-green">161 / 161</div>
         <div class="stat-label">Verified Test Suites</div>
       </div>
       <div class="stat-card">
@@ -1040,17 +1040,11 @@
       document.getElementById('modal-token-icon').textContent = token.substring(0, 2);
       document.getElementById('modal-token-name').textContent = token;
 
-      // Compute mock individual gauge values for visual rich aesthetics based on score
-      const base = Math.abs(s.divergence);
-      const val1 = Math.min(100, Math.floor(base * 0.95 + 10));
-      const val2 = Math.min(100, Math.floor(base * 0.85 + 5));
-      const val3 = Math.min(100, Math.floor(base * 0.75 + 12));
-      const val4 = Math.min(100, Math.floor(base * 0.9 + 8));
-
-      setGauge('derivatives', val1);
-      setGauge('whale', val2);
-      setGauge('sentiment', val3);
-      setGauge('technical', val4);
+      // Bind individual gauge values directly from the backend's real plane metrics
+      setGauge('derivatives', s.derivatives_pct ?? 50);
+      setGauge('whale', s.whale_pct ?? 50);
+      setGauge('sentiment', s.sentiment_pct ?? 50);
+      setGauge('technical', s.technical_pct ?? 50);
 
       const reasonsWrap = document.getElementById('modal-reasons-list');
       reasonsWrap.innerHTML = '';
