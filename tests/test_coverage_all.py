@@ -63,7 +63,7 @@ def test_run_divergence_missing_fixture(monkeypatch):
 def test_main_branch_offline(capsys):
     with patch("app.run_divergence", return_value={"dummy": "spec"}):
         with patch.object(sys, "argv", ["app.py"]):
-            import app as test_app
+            import app as test_app  # type: ignore
             test_app.run_divergence({"token": "CAKE"})
             assert True
 
@@ -72,7 +72,7 @@ def test_main_branch_serve():
     with patch("uvicorn.run") as mock_run:
         with patch("app.build_app", return_value="mock_app"):
             with patch.object(sys, "argv", ["app.py", "--serve"]):
-                import app as test_app
+                import app as test_app  # type: ignore
                 if "--serve" in sys.argv:
                     import uvicorn
                     import os
