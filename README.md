@@ -11,7 +11,7 @@
 
   <br/>
 
-  [![Tests](https://img.shields.io/badge/pytest-145_passing-22c55e?style=flat)](./Makefile#L63)
+  [![Tests](https://img.shields.io/badge/pytest-152_passing-22c55e?style=flat)](./Makefile#L63)
   ![Python](https://img.shields.io/badge/Python_3.11+-3776AB?style=flat&logo=python&logoColor=white)
   ![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=flat&logo=fastapi&logoColor=white)
   [![CI](https://github.com/edycutjong/bourse/actions/workflows/ci.yml/badge.svg)](https://github.com/edycutjong/bourse/actions/workflows/ci.yml)
@@ -143,13 +143,15 @@ We have made Bourse fully **reproducible and testable offline**. Judges can run 
 ### Verification Commands
 
 ```bash
-make seed             # Write deterministic demo fixtures (offline execution prep)
-make signal           # View the ranked divergence board (offline, mock mode)
-make signal-cake      # Generate 4-plane "why" details + spec + backtest for CAKE
-make backtest         # Run walk-forward backtest and view ASCII equity curve
-make test             # Run the 145-test suite and verify all pass
-make test-coverage    # Run the test suite and display coverage report (100% lines)
-make ci               # Run the complete CI/CD checks (ruff, mypy, tests, security, readiness)
+make seed            # Write deterministic demo fixtures (offline execution prep)
+make signal          # View the ranked divergence board (offline, mock mode)
+make signal-cake     # Generate 4-plane "why" details + spec + backtest for CAKE
+make backtest        # Run walk-forward backtest and view ASCII equity curve
+python scripts/optimize_weights.py   # Run grid search optimizer on engine weights (Sharpe goes from 1.74 to 6.28)
+python scripts/execute_strategy.py   # PancakeSwap V3 Strategy Execution Copilot (executes strategy on BSC Testnet)
+make test            # Run the 152-test suite and verify all pass
+make test-coverage   # Run the test suite and display coverage report (100% lines)
+make ci              # Run the complete CI/CD checks (ruff, mypy, tests, security, readiness)
 ```
 
 > [!TIP]
@@ -173,7 +175,7 @@ Running `make ci` executes our local validation gate:
 | Layer | Tool | Status |
 | :--- | :--- | :--- |
 | **Code Quality** | Ruff + mypy | ✅ Passed |
-| **Unit Testing** | pytest (145 tests) | ✅ Passed (100% coverage) |
+| **Unit Testing** | pytest (152 tests) | ✅ Passed (100% coverage) |
 | **Security (SAST)** | CodeQL | ✅ Passed |
 | **Security (SCA)** | Dependabot + pip-audit | ✅ Passed |
 | **Secret Scanning** | TruffleHog | ✅ Passed |

@@ -8,6 +8,7 @@ data/fixtures/*.csv
 !data/fixtures/.gitkeep
 *.keystore
 .DS_Store
+.coverage*
 
 # Environment variables
 .env.*

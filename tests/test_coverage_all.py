@@ -358,7 +358,7 @@ def test_bench_script_missing_fixture(monkeypatch):
 # --------------------------------------------------------------------------- #
 
 def test_check_readiness_main(monkeypatch):
-    monkeypatch.setattr(check_submission_readiness, "pytest_count", lambda: 145)
+    monkeypatch.setattr(check_submission_readiness, "pytest_count", lambda: 152)
     monkeypatch.setattr(check_submission_readiness, "pytest_passes", lambda: True)
     monkeypatch.setattr(check_submission_readiness, "is_tracked", lambda path: path != ".env")
     
@@ -374,7 +374,7 @@ def test_check_submission_readiness_real_functions():
         if "ls-files" in args:
             mock_res.returncode = 0 if ".env" not in args else 1
         elif "--collect-only" in args:
-            mock_res.stdout = "145 tests collected"
+            mock_res.stdout = "152 tests collected"
             mock_res.returncode = 0
         elif "pytest" in args:
             mock_res.returncode = 0
@@ -383,7 +383,7 @@ def test_check_submission_readiness_real_functions():
     with patch("subprocess.run", side_effect=mock_run_cmd):
         assert check_submission_readiness.is_tracked("README.md") is True
         assert check_submission_readiness.is_tracked(".env") is False
-        assert check_submission_readiness.pytest_count() == 145
+        assert check_submission_readiness.pytest_count() == 152
         assert check_submission_readiness.pytest_passes() is True
         
         with patch("sys.exit") as mock_exit:
@@ -634,3 +634,70 @@ def test_fetch_fear_greed_history_success(monkeypatch):
     with patch("requests.get", return_value=MockResp()):
         res = fetch_fear_greed_history()
         assert res == [45.0, 50.0]
+
+
+def test_optimize_weights_success(monkeypatch):
+    import optimize_weights
+    import bourse.engine
+    # Restore original weights afterwards to avoid side-effects on other tests
+    orig_w = dict(bourse.engine.W)
+    try:
+        optimize_weights.main()
+    finally:
+        bourse.engine.W.update(orig_w)
+
+
+def test_optimize_weights_missing_fixture(monkeypatch):
+    import optimize_weights
+    original_exists = os.path.exists
+    monkeypatch.setattr(os.path, "exists", lambda p: False if "backtest_cake.json" in p else original_exists(p))
+    with pytest.raises(SystemExit):
+        optimize_weights.main()
+
+
+def test_execute_strategy_no_action(monkeypatch):
+    import execute_strategy
+    # Mock compute to return direction = none
+    from bourse.engine import Signal
+    mock_sig = Signal("CAKE", 0.0, "chop", "none", 0.0)
+    monkeypatch.setattr(execute_strategy, "compute", lambda *a: mock_sig)
+    with patch("sys.argv", ["execute_strategy.py", "--token", "CAKE"]):
+        execute_strategy.main()
+
+
+def test_execute_strategy_success(monkeypatch):
+    import execute_strategy
+    # Mock environment
+    monkeypatch.setenv("WALLET_PASSWORD", "mock_password")
+    monkeypatch.setenv("PRIVATE_KEY", "0x4e582560bc6ffb3131547778dc9106d2956035113ce76fc5936ac1ed28402caa")
+    
+    mock_wallet = MagicMock()
+    mock_client = MagicMock()
+    mock_client.w3.eth.gas_price = 1000
+    mock_client.w3.eth.get_transaction_count.return_value = 0
+    mock_client.w3.eth.chain_id = 97
+    mock_client.w3.eth.send_raw_transaction.return_value = MagicMock(hex=lambda: "mock_tx_hash")
+    mock_client.w3.eth.wait_for_transaction_receipt.return_value = MagicMock(blockNumber=123)
+    mock_client.w3.to_hex.return_value = "0xdata"
+    
+    with patch("bnbagent.wallets.EVMWalletProvider", return_value=mock_wallet):
+        with patch("bnbagent.erc8183.ERC8183Client", return_value=mock_client):
+            with patch("sys.argv", ["execute_strategy.py", "--token", "CAKE"]):
+                execute_strategy.main()
+
+
+def test_execute_strategy_missing_fixture(monkeypatch):
+    import execute_strategy
+    original_exists = os.path.exists
+    monkeypatch.setattr(os.path, "exists", lambda p: False if "demo.json" in p else original_exists(p))
+    with pytest.raises(SystemExit):
+        execute_strategy.main()
+
+
+def test_execute_strategy_missing_env(monkeypatch):
+    import execute_strategy
+    monkeypatch.delenv("WALLET_PASSWORD", raising=False)
+    with pytest.raises(SystemExit):
+        execute_strategy.main()
+
+
