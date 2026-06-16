@@ -1,16 +1,15 @@
+# ruff: noqa: E402
 import sys
 import os
-import pytest
-import subprocess
-import socket
 from unittest.mock import MagicMock, patch
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.insert(0, ROOT)
 sys.path.insert(0, os.path.join(ROOT, "scripts"))
 
-import check_submission_readiness
-import run_terminal_demo
+from scripts import check_submission_readiness
+from scripts import run_terminal_demo
+
 
 
 # --------------------------------------------------------------------------- #
