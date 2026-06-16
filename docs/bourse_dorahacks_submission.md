@@ -101,6 +101,8 @@ We realized that agentic Web3 commerce doesn't need complex, heavy oracle protoc
     2.  *Divergence Metrics Modal*: Displays the normalized z-score gauges and dynamic SVG backtest equity curve.
         <img width="800" height="450" alt="dashboard-on-chain-simulator-buyer" src="https://github.com/user-attachments/assets/b9d9a72d-31e7-4361-836d-b3930a6b2df1" />
     3.  *Hacker Simulation Console*: Shows real-time BSC Testnet buyer agent logs (negotiating, funding escrow, and settling).
+    4.  *Claude Desktop MCP Server Session*: Shows Claude Desktop running the Bourse divergence tools via stdio MCP connection.
+        <img width="720" height="500" alt="Screen Recording 2026-06-16 at 18 00 44" src="https://github.com/user-attachments/assets/6883afc7-7349-478d-b1b6-2cbd3b219a12" />
 
 ---
 
