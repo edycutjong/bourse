@@ -11,7 +11,7 @@
   
   <br/>
 
-  [![MCP](https://img.shields.io/badge/-MCP-black?logo=modelcontextprotocol)](https://mcpx.dev)
+  [![MCP](https://img.shields.io/badge/-MCP-D4A27F?logo=modelcontextprotocol)](https://mcpx.dev)
   [![Tests](https://img.shields.io/badge/pytest-161_passing-22c55e?style=flat)](./Makefile#L63)
   ![Python](https://img.shields.io/badge/Python_3.11+-3776AB?style=flat&logo=python&logoColor=white)
   ![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=flat&logo=fastapi&logoColor=white)

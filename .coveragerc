@@ -1,0 +1,7 @@
+[run]
+omit =
+    tests/*
+    tests/conftest.py
+    scripts/claim_faucet.py
+    scripts/check_submission_readiness.py
+    scripts/run_terminal_demo.py

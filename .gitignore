@@ -9,6 +9,7 @@ data/fixtures/*.csv
 *.keystore
 .DS_Store
 .coverage*
+!.coveragerc
 
 # Environment variables
 .env.*
