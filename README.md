@@ -1,8 +1,9 @@
 <div align="center">
-  <img src="docs/icon.svg" width="140" alt="Bourse">
+  <img src="docs/icon.svg" width="140" alt="Bourse Icon">
 
   <h1>Bourse 🌈⃤</h1>
   <p><em>The exchange for strategy intelligence — fading the crowd, funded by whales.</em></p>
+  <img src="docs/readme-hero.png" alt="Bourse README" width="100%">
   
   [![Demo Walkthrough](https://img.shields.io/badge/▶_Demo-Walkthrough-06b6d4?style=for-the-badge)](./DEMO.md)
   [![Strategy Skill](https://img.shields.io/badge/📊_SKILL.md-Track_2-22c55e?style=for-the-badge)](./skill/bourse/SKILL.md)

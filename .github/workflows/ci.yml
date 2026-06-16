@@ -29,9 +29,10 @@ jobs:
           pip install -r requirements.txt
           pip install ruff mypy pytest pytest-cov
       - name: Format & Lint (Ruff)
-        run: ruff check . || true
+        run: ruff check .
       - name: Type check (mypy)
-        run: python -m mypy . --ignore-missing-imports || true
+        run: python -m mypy . --ignore-missing-imports
+        continue-on-error: true
       - name: Unit tests with coverage
         run: python -m pytest -v --cov=. --cov-report=xml --cov-report=term
       - name: Upload coverage report
@@ -70,11 +71,12 @@ jobs:
         run: |
           pip install pip-audit
       - name: pip audit
-        run: pip-audit -r requirements.txt || true
+        run: pip-audit -r requirements.txt
+        continue-on-error: true
 
-  # ── STAGE 6: Deploy Gate ──────────────────────
+  # ── STAGE 3: Deploy Gate ──────────────────────
   deploy-gate:
-    name: "Stage 6 · Deploy Gate"
+    name: "Stage 3 · Deploy Gate"
     needs: [backend-quality, secret-scan, dependency-audit]
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -87,3 +89,4 @@ jobs:
           echo "  ✅ Stage 1 — Backend Quality (lint, typecheck, tests)"
           echo "  ✅ Stage 2 — Secret Scanning (TruffleHog)"
           echo "  ✅ Stage 2 — Dependency Audit (pip-audit)"
+          echo "  ✅ Stage 3 — Deploy Gate"
