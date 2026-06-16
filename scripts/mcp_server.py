@@ -18,8 +18,8 @@ sys.path.insert(0, ROOT)
 dotenv_path = os.path.join(ROOT, ".env")
 load_dotenv(dotenv_path=dotenv_path)
 
-from bourse import Planes, build_spec, compute, run_backtest, to_yaml
-from bourse.ingest import from_fixture, from_mcp
+from bourse import build_spec, compute, run_backtest, to_yaml  # noqa: E402
+from bourse.ingest import from_fixture, from_mcp  # noqa: E402
 
 DEMO_FIX = os.path.join(ROOT, "data", "fixtures", "demo.json")
 BT_FIX = os.path.join(ROOT, "data", "fixtures", "backtest_cake.json")
@@ -275,9 +275,9 @@ def main_loop():
                     "error": {"code": -32601, "message": f"Method not found: {method}"},
                     "id": msg_id
                 })
-        except Exception as e:
+        except Exception:
             log(f"Exception in loop: {traceback.format_exc()}")
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     # Make script executable via chmod if needed
     main_loop()

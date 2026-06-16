@@ -46,12 +46,13 @@ def run_cmd_and_stream(args: list[str], cwd: str = ROOT):
     )
     
     # Read output line by line in real-time
-    while True:
-        line = p.stdout.readline()
-        if not line and p.poll() is not None:
-            break
-        if line:
-            print(line, end="", flush=True)
+    if p.stdout is not None:
+        while True:
+            line = p.stdout.readline()
+            if not line and p.poll() is not None:
+                break
+            if line:
+                print(line, end="", flush=True)
             
     p.wait()
     return p.returncode

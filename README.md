@@ -8,6 +8,7 @@
   [![YouTube Video](https://img.shields.io/badge/▶_Demo-Video-EF4444?style=for-the-badge)](https://youtu.be/Y5YgTCEqJqw)
   [![Strategy Skill](https://img.shields.io/badge/🎯_SKILL.md-Track_2-22c55e?style=for-the-badge)](./skill/bourse/SKILL.md)
   [![Built for BNB Hackathon](https://img.shields.io/badge/DoraHacks-BNB_Hackathon_2026-F97631?style=for-the-badge)](https://dorahacks.io/hackathon/bnbhack-twt-cmc/detail)
+  [<img src="https://badge.mcpx.dev" title="MCP"/>](https://mcpx.dev)
 
   <br/>
 
@@ -26,13 +27,13 @@
 
 <div align="center">
   <p><strong>1. Interactive Web3 Dashboard & Strategy Terminal</strong></p>
-  <img width="800" height="450" alt="dashboard-overview" src="https://github.com/user-attachments/assets/9c7c64af-d7cd-4424-9a2a-96ac45aeabf5" />
+  <img width="800" height="450" alt="Dashboard Overview" src="https://github.com/user-attachments/assets/9c7c64af-d7cd-4424-9a2a-96ac45aeabf5" />
   <br/><br/>
   <p><strong>2. On-Chain Buyer Agent Simulation</strong></p>
-  <img width="800" height="450" alt="dashboard-on-chain-simulator-buyer" src="https://github.com/user-attachments/assets/b9d9a72d-31e7-4361-836d-b3930a6b2df1" />
+  <img width="800" height="450" alt="On Chain Simulator Buyer" src="https://github.com/user-attachments/assets/b9d9a72d-31e7-4361-836d-b3930a6b2df1" />
   <br/><br/>
   <p><strong>3. Live Claude Desktop MCP Session</strong></p>
-  <img width="720" height="500" alt="Screen Recording 2026-06-16 at 18 00 44" src="https://github.com/user-attachments/assets/6883afc7-7349-478d-b1b6-2cbd3b219a12" />
+  <img width="720" height="500" alt="Claude Desktop MCP Session" src="https://github.com/user-attachments/assets/6883afc7-7349-478d-b1b6-2cbd3b219a12" />
   <br/><br/>
   <p><strong>4. YouTube Walkthrough Presentation:</strong></p>
   <a href="https://youtu.be/Y5YgTCEqJqw" target="_blank">
