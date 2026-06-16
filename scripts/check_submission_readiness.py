@@ -65,8 +65,8 @@ def build_gates():
     req(".env not committed", not is_tracked(".env"),
         "remove .env from git tracking before pushing")
     req("README images tracked (not gitignored)",
-        is_tracked("docs/readme.png") and is_tracked("docs/readme-hero.png"),
-        "git add docs/*.png so the README renders on GitHub")
+        is_tracked("docs/og-image.png") and is_tracked("docs/readme-hero.svg"),
+        "git add docs/* so the README renders on GitHub")
     req("clear setup instructions (DEMO.md run steps)",
         "scripts/signal.py" in demo and "pip install" in demo,
         "DEMO.md must show runnable steps")

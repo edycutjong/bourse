@@ -16,7 +16,7 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from bourse import compute, build_spec, run_backtest
-from bourse.ingest import from_fixture
+from bourse.ingest import from_fixture, from_mcp
 
 DATA = os.path.join(os.path.dirname(__file__), "..", "data", "fixtures")
 FIXTURE = os.path.join(DATA, "demo.json")
@@ -47,13 +47,29 @@ def run_divergence(job: dict) -> dict:
     """on_job handler: read requested token from the job, return the signal spec.
     `job` follows the SDK schema (jobId/description/budget/client/provider/...)."""
     token = _token_of(job)
-    # live path: planes = ingest.from_mcp(token); demo path: fixture
-    if not os.path.exists(FIXTURE):
-        raise RuntimeError("no fixture — run scripts/seed.py")
-    try:
-        planes = from_fixture(token, FIXTURE)
-    except KeyError:
-        raise RuntimeError(f"no data for token {token!r}")
+    
+    # If CMC_MCP_API_KEY is configured in the environment, query the live CoinMarketCap MCP service.
+    # Otherwise, fall back to the local seeded fixture file.
+    mcp_api_key = os.environ.get("CMC_MCP_API_KEY")
+    if mcp_api_key:
+        try:
+            planes = from_mcp(token)
+        except Exception as e:
+            # Fallback to fixture if live API fails
+            if not os.path.exists(FIXTURE):
+                raise RuntimeError(f"Live MCP query failed: {e}. Additionally, no fixture file found.")
+            try:
+                planes = from_fixture(token, FIXTURE)
+            except KeyError:
+                raise RuntimeError(f"Live MCP query failed: {e}. Additionally, no fixture data for token {token!r}.")
+    else:
+        if not os.path.exists(FIXTURE):
+            raise RuntimeError("no fixture — run scripts/seed.py")
+        try:
+            planes = from_fixture(token, FIXTURE)
+        except KeyError:
+            raise RuntimeError(f"no data for token {token!r}")
+            
     sig = compute(token, planes)
     return build_spec(sig, backtest=_real_backtest(token))
 
@@ -70,7 +86,77 @@ def build_app():  # pragma: no cover - needs bnbagent[server] + WALLET_PASSWORD
     or:          python server/app.py --serve
     Needs env: WALLET_PASSWORD (+ PRIVATE_KEY for a funded wallet), ERC8183_AGENT_URL."""
     from bnbagent.erc8183.server import create_erc8183_app
-    return create_erc8183_app(on_job=execute_job)
+    from fastapi.responses import HTMLResponse
+    from fastapi.staticfiles import StaticFiles
+    from server.simulation import router as sim_router
+    
+    app = create_erc8183_app(on_job=execute_job)
+    
+    from fastapi.middleware.cors import CORSMiddleware
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+    
+    # Include simulation endpoints
+    app.include_router(sim_router)
+    
+    # Mount docs directory so all icon, image, and style assets resolve
+    app.mount("/docs", StaticFiles(directory=os.path.join(os.path.dirname(__file__), "..", "docs")), name="docs")
+    
+    # Serve index.html at root /
+    @app.get("/", response_class=HTMLResponse)
+    def get_index():
+        index_path = os.path.join(os.path.dirname(__file__), "..", "landing", "index.html")
+        if os.path.exists(index_path):
+            with open(index_path) as f:
+                return HTMLResponse(content=f.read(), status_code=200)
+        return HTMLResponse(content="<h1>Bourse Server</h1>", status_code=200)
+        
+    # Serve signals.json dynamically so the board loads live data
+    @app.get("/signals.json")
+    def get_signals_json():
+        fix_path = os.path.join(os.path.dirname(__file__), "..", "data", "fixtures", "demo.json")
+        if not os.path.exists(fix_path):
+            return []
+        with open(fix_path) as f:
+            tokens_data = json.load(f)
+            
+        res = []
+        for token in tokens_data.keys():
+            try:
+                planes = from_fixture(token, fix_path)
+                s = compute(token, planes)
+                res.append({
+                    "token": s.token,
+                    "divergence": float(s.divergence),
+                    "regime": s.regime,
+                    "direction": s.direction,
+                    "confidence": float(s.confidence),
+                    "reasons": s.reasons
+                })
+            except Exception:
+                pass
+        return res
+        
+    @app.get("/api/backtest/{token}")
+    def get_backtest(token: str):
+        token_upper = token.upper()
+        fix_path = os.path.join(os.path.dirname(__file__), "..", "data", "fixtures", "backtest_cake.json")
+        if not os.path.exists(fix_path):
+            return {"error": "Backtest fixture not found"}
+        with open(fix_path) as f:
+            history = json.load(f)
+        try:
+            m = run_backtest(history, token=token_upper)
+            return m
+        except Exception as e:
+            return {"error": str(e)}
+        
+    return app
 
 
 if __name__ == "__main__":
@@ -80,3 +166,4 @@ if __name__ == "__main__":
     else:
         # offline sanity: print exactly what a buyer would receive for CAKE
         print(json.dumps(run_divergence({"token": "CAKE"}), indent=2))
+

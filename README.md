@@ -6,7 +6,7 @@
   <img src="docs/readme-hero.svg" alt="Bourse README" width="100%">
   
   [![Demo Walkthrough](https://img.shields.io/badge/▶_Demo-Walkthrough-06b6d4?style=for-the-badge)](./DEMO.md)
-  [![Strategy Skill](https://img.shields.io/badge/📊_SKILL.md-Track_2-22c55e?style=for-the-badge)](./skill/bourse/SKILL.md)
+  [![Strategy Skill](https://img.shields.io/badge/🎯_SKILL.md-Track_2-22c55e?style=for-the-badge)](./skill/bourse/SKILL.md)
   [![Built for BNB Hackathon](https://img.shields.io/badge/DoraHacks-BNB_Hackathon_2026-8b5cf6?style=for-the-badge)](https://dorahacks.io/hackathon/bnbhack-twt-cmc/detail)
 
   <br/>
@@ -22,7 +22,7 @@
 ## 📸 See it in Action
 
 <div align="center">
-  <img src="docs/og-image.png" alt="Bourse Demo" width="100%">
+  <img src="landing/og-image.png" alt="Bourse Demo" width="100%">
 </div>
 
 > **A retail trader apes a KOL-pumped token at the top — while the whales who funded those KOLs quietly sell into his bid.** Bourse is the signal that screams *fade, don't follow* — and sells it to any agent by the cent.

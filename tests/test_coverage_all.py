@@ -30,6 +30,8 @@ import probe_cmc_history  # type: ignore
 
 # Dynamically load signal.py to avoid name clash with Python's built-in signal module
 spec = importlib.util.spec_from_file_location("bourse_signal_cli", os.path.join(ROOT, "scripts", "signal.py"))
+assert spec is not None
+assert spec.loader is not None
 signal_cli = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(signal_cli)
 
@@ -85,12 +87,13 @@ def test_app_main_block_serve(monkeypatch):
     monkeypatch.setenv("PRIVATE_KEY", "0x4e582560bc6ffb3131547778dc9106d2956035113ce76fc5936ac1ed28402caa")
     monkeypatch.setenv("ERC8183_SERVICE_PRICE", "100")
     with patch("uvicorn.run") as mock_run:
-        with patch("bnbagent.erc8183.server.create_erc8183_app", return_value="mock_app"):
+        mock_app = MagicMock()
+        with patch("bnbagent.erc8183.server.create_erc8183_app", return_value=mock_app):
             with patch.object(sys, "argv", ["app.py", "--serve"]):
                 spec = importlib.util.spec_from_file_location("__main__", os.path.join(ROOT, "server", "app.py"))
                 m = importlib.util.module_from_spec(spec)
                 spec.loader.exec_module(m)
-                mock_run.assert_called_once_with("mock_app", host="0.0.0.0", port=8003)
+                mock_run.assert_called_once_with(mock_app, host="0.0.0.0", port=8003)
 
 
 def test_app_main_block_offline():
