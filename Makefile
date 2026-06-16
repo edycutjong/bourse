@@ -90,6 +90,39 @@ ready: ## Run submission readiness gate check
 	@echo "$(BLUE)Running readiness gate check...$(RESET)"
 	python scripts/check_submission_readiness.py
 
+##@ Version Management & Release
+.PHONY: patch minor major
+
+patch: ## Bump patch version, commit, tag and push (e.g. 1.0.0 -> 1.0.1)
+	@NEW_VER=$$(python scripts/bump_version.py patch); \
+	echo "$(GREEN)Bumped version to $$NEW_VER$(RESET)"; \
+	git add pyproject.toml bourse/ingest.py server/identity.py scripts/mcp_server.py; \
+	git commit -m "bump: version $$NEW_VER"; \
+	git tag -d v$$NEW_VER 2>/dev/null || true; \
+	git push origin :refs/tags/v$$NEW_VER 2>/dev/null || true; \
+	git tag v$$NEW_VER; \
+	git push origin main --tags
+
+minor: ## Bump minor version, commit, tag and push (e.g. 1.0.0 -> 1.1.0)
+	@NEW_VER=$$(python scripts/bump_version.py minor); \
+	echo "$(GREEN)Bumped version to $$NEW_VER$(RESET)"; \
+	git add pyproject.toml bourse/ingest.py server/identity.py scripts/mcp_server.py; \
+	git commit -m "bump: version $$NEW_VER"; \
+	git tag -d v$$NEW_VER 2>/dev/null || true; \
+	git push origin :refs/tags/v$$NEW_VER 2>/dev/null || true; \
+	git tag v$$NEW_VER; \
+	git push origin main --tags
+
+major: ## Bump major version, commit, tag and push (e.g. 1.0.0 -> 2.0.0)
+	@NEW_VER=$$(python scripts/bump_version.py major); \
+	echo "$(GREEN)Bumped version to $$NEW_VER$(RESET)"; \
+	git add pyproject.toml bourse/ingest.py server/identity.py scripts/mcp_server.py; \
+	git commit -m "bump: version $$NEW_VER"; \
+	git tag -d v$$NEW_VER 2>/dev/null || true; \
+	git push origin :refs/tags/v$$NEW_VER 2>/dev/null || true; \
+	git tag v$$NEW_VER; \
+	git push origin main --tags
+
 ##@ Utilities
 .PHONY: clean help
 

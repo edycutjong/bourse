@@ -180,7 +180,7 @@ def main_loop():
                         },
                         "serverInfo": {
                             "name": "bourse-mcp",
-                            "version": "0.1.0"
+                            "version": "1.0.1"
                         }
                     },
                     "id": msg_id
