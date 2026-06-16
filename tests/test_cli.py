@@ -1,7 +1,6 @@
 """End-to-end CLI tests for scripts/signal.py (run in-process via runpy, offline fixture mode)."""
 import json
 import os
-import sys
 import pytest
 import runpy
 import io
