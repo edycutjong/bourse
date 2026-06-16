@@ -15,6 +15,13 @@ import json
 import os
 import sys
 import re
+
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except Exception:  # pragma: no cover
+    pass
+
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from bourse import compute, build_spec, run_backtest
 from bourse.ingest import from_fixture, from_mcp

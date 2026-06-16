@@ -761,7 +761,7 @@ def test_token_of_validation_regex_and_clamping():
 
 
 def test_simulation_state_snapshot_and_redaction():
-    from server.simulation import SimulationState, run_simulation_thread, trigger_simulation, get_simulation_status, state
+    from server.simulation import SimulationState, run_simulation_thread, state
     
     # Test snapshot
     s = SimulationState()
@@ -797,7 +797,7 @@ def test_simulation_state_snapshot_and_redaction():
 
 
 def test_simulation_trigger_endpoints(monkeypatch):
-    from server.simulation import trigger_simulation, get_simulation_status, state
+    from server.simulation import trigger_simulation, state
     
     # Force state to running and test trigger return
     with state._lock:
