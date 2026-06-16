@@ -25,6 +25,13 @@
 ## 📸 See it in Action
 
 <div align="center">
+  <p><strong>1. Interactive Web3 Dashboard & Strategy Terminal</strong></p>
+  <img width="800" height="450" alt="dashboard-overview" src="https://github.com/user-attachments/assets/9c7c64af-d7cd-4424-9a2a-96ac45aeabf5" />
+  <br/><br/>
+  <p><strong>2. On-Chain Buyer Agent Simulation</strong></p>
+  <img width="800" height="450" alt="dashboard-on-chain-simulator-buyer" src="https://github.com/user-attachments/assets/b9d9a72d-31e7-4361-836d-b3930a6b2df1" />
+  <br/><br/>
+  <p><strong>3. YouTube Walkthrough Presentation:</strong></p>
   <a href="https://youtu.be/Y5YgTCEqJqw" target="_blank">
     <img src="docs/og-image.png" alt="Bourse Demo Video (Click to Watch)" width="100%">
   </a>

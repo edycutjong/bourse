@@ -97,7 +97,9 @@ We realized that agentic Web3 commerce doesn't need complex, heavy oracle protoc
 *   **Banner (16:9 PNG)**: [docs/assets/og-image.png](file:///Users/edycu/Projects/Hackathon/dorahacks-bnbhack-bourse/docs/assets/og-image.png)
 *   **Screenshots**:
     1.  *Main Dashboard View*: Showcases the ranked divergence board with CAKE marked SHORT.
+        <img width="800" height="450" alt="dashboard-overview" src="https://github.com/user-attachments/assets/9c7c64af-d7cd-4424-9a2a-96ac45aeabf5" />
     2.  *Divergence Metrics Modal*: Displays the normalized z-score gauges and dynamic SVG backtest equity curve.
+        <img width="800" height="450" alt="dashboard-on-chain-simulator-buyer" src="https://github.com/user-attachments/assets/b9d9a72d-31e7-4361-836d-b3930a6b2df1" />
     3.  *Hacker Simulation Console*: Shows real-time BSC Testnet buyer agent logs (negotiating, funding escrow, and settling).
 
 ---
