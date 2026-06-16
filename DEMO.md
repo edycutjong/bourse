@@ -22,11 +22,15 @@ crowd hot (z=+1.84) · whales net-outflow · funding overcrowded-long (z=+1.79) 
 ```
 Then the `bourse.signal.v1` YAML spec (entry/exit/ATR stop/sizing/invalidation/sources).
 
-Reproduce offline (no network):
+Reproduce offline (no network), one command:
 ```bash
-python -c "import json;from bourse import *;d=json.load(open('data/fixtures/demo.json'));\
-h=json.load(open('data/fixtures/backtest_cake.json'));bt=run_backtest(h,token='CAKE');\
-print(to_yaml(build_spec(compute('CAKE',Planes(**d['CAKE'])),backtest={k:bt[k] for k in('sharpe','max_dd','win_rate')})))"
+python scripts/signal.py                 # ranked board: CAKE SHORT, XYZL LONG, ABCN no-trade
+python scripts/signal.py --token CAKE    # 4-plane "why" + bourse.signal.v1 spec + backtest
+```
+Same engine, live data (needs `CMC_MCP_API_KEY`):
+```bash
+python scripts/signal.py --discover            # list the live CMC MCP tools
+python scripts/signal.py --token CAKE --live   # planes pulled from the CMC MCP
 ```
 
 ## Beat 3 — backtest + authenticity (1:10–1:50)
@@ -55,5 +59,5 @@ Expected: ERC-8004 registration tx + ERC-8183 fund tx + settle tx on BSC testnet
 
 ## Expected test state
 ```bash
-pytest -q     # 12 passing now; ≥100 by submission
+pytest -q     # 91 passing (engine, regime matrix, spec, ingest/MCP client, CLI, backtest)
 ```

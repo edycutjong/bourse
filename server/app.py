@@ -15,7 +15,7 @@ import json
 import os
 import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-from bourse import compute, build_spec, Planes, run_backtest
+from bourse import compute, build_spec, run_backtest
 from bourse.ingest import from_fixture
 
 DATA = os.path.join(os.path.dirname(__file__), "..", "data", "fixtures")

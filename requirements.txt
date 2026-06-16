@@ -1,7 +1,6 @@
 # core
 requests>=2.31
 python-dotenv>=1.0
-pandas>=2.1
 numpy>=1.26
 pyyaml>=6.0
 # server + commerce (verify exact extras name against the repo)

@@ -40,7 +40,7 @@ def main(token: str, *, poll_s: int = 10, timeout_s: int = 600):
 
     decimals = erc8183.token_decimals()
     budget = int(os.environ.get("ERC8183_SERVICE_PRICE", str(1 * 10 ** decimals)))
-    expired_at = int(time.time()) + 65 * 60
+    expired_at = int(time.time()) + 172800
 
     res = erc8183.create_job(provider=provider, expired_at=expired_at,
                              description=f"{token} divergence signal")

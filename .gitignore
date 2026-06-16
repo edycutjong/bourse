@@ -8,3 +8,20 @@ data/fixtures/*.csv
 !data/fixtures/.gitkeep
 *.keystore
 .DS_Store
+
+# Environment variables
+.env.*
+!.env.example
+
+# Generated assets
+assets/
+
+# Python build/testing cache/artifacts
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+build/
+dist/
+*.egg-info/
+

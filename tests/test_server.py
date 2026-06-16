@@ -43,3 +43,31 @@ def test_execute_job_returns_json_spec_string():
 def test_unknown_token_raises():
     with pytest.raises(RuntimeError):
         app.run_divergence({"token": "NOPE"})
+
+
+def test_real_backtest_valid_token():
+    res = app._real_backtest("CAKE")
+    assert res is not None
+    assert set(res.keys()) == {"sharpe", "max_dd", "win_rate"}
+    assert res["sharpe"] > 0
+
+
+def test_real_backtest_invalid_token():
+    res = app._real_backtest("NOPE")
+    assert res is not None
+    assert "sharpe" in res
+
+
+def test_execute_job_token_casing():
+    # description contains lowercase 'cake divergence signal'
+    out = app.execute_job({"description": "cake divergence signal"})
+    spec = json.loads(out)
+    assert spec["token"] == "CAKE"
+    assert spec["direction"] == "short"
+
+
+def test_build_app_returns_fastapi_app(monkeypatch):
+    # Mock create_erc8183_app to return a dummy string or FastAPI instance
+    monkeypatch.setattr("bnbagent.erc8183.server.create_erc8183_app", lambda on_job: "dummy_app")
+    assert app.build_app() == "dummy_app"
+
