@@ -365,10 +365,11 @@ def test_check_readiness_main(monkeypatch):
     
     original_read = check_submission_readiness.read
     def mock_read(p):
+        import re
         content = original_read(p)
         if "README.md" in p:
-            content = content.replace("pytest-213_passing", "pytest-161_passing")
-            content = content.replace("pytest (213 tests)", "pytest (161 tests)")
+            content = re.sub(r"pytest-\d+_passing", "pytest-161_passing", content)
+            content = re.sub(r"pytest \(\d+ tests\)", "pytest (161 tests)", content)
         return content
     monkeypatch.setattr(check_submission_readiness, "read", mock_read)
     
@@ -395,10 +396,11 @@ def test_check_submission_readiness_real_functions():
         if "w" in mode:
             return MagicMock()
         if "README.md" in str(file):
+            import re
             with original_open(file, "r", *args, **kwargs) as f:
                 content = f.read()
-            content = content.replace("pytest-213_passing", "pytest-161_passing")
-            content = content.replace("pytest (213 tests)", "pytest (161 tests)")
+            content = re.sub(r"pytest-\d+_passing", "pytest-161_passing", content)
+            content = re.sub(r"pytest \(\d+ tests\)", "pytest (161 tests)", content)
             m = MagicMock()
             m.read.return_value = content
             m.__enter__.return_value = m

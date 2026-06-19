@@ -12,7 +12,7 @@
   <br/>
 
   [![MCP](https://img.shields.io/badge/-MCP-D4A27F?logo=modelcontextprotocol)](https://mcpx.dev)
-  [![Tests](https://img.shields.io/badge/pytest-213_passing-22c55e?style=flat)](./Makefile#L63)
+  [![Tests](https://img.shields.io/badge/pytest-225_passing-22c55e?style=flat)](./Makefile#L63)
   ![Python](https://img.shields.io/badge/Python_3.11+-3776AB?style=flat&logo=python&logoColor=white)
   ![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=flat&logo=fastapi&logoColor=white)
   ![BNB Chain](https://img.shields.io/badge/BNB_Chain-F3BA2F?style=flat&logo=binance&logoColor=white)
@@ -215,7 +215,7 @@ Running `make ci` executes our local validation gate:
 | Layer | Tool | Status |
 | :--- | :--- | :--- |
 | **Code Quality** | Ruff + mypy | ✅ Passed |
-| **Unit Testing** | pytest (213 tests) | ✅ Passed (100% coverage) |
+| **Unit Testing** | pytest (225 tests) | ✅ Passed (100% coverage) |
 | **Security (SAST)** | CodeQL | ✅ Passed |
 | **Security (SCA)** | Dependabot + pip-audit | ✅ Passed |
 | **Secret Scanning** | TruffleHog | ✅ Passed |
