@@ -5,11 +5,11 @@
 ## Tech stack (optimized for solo, 3 weeks)
 | Layer | Choice | Why |
 |---|---|---|
-| Language | **Python 3.11** | bnbagent-sdk is Python; CMC MCP + pandas backtest in one runtime |
+| Language | **Python 3.11** | bnbagent-sdk is Python; CMC MCP + numpy backtest in one runtime |
 | Agent/commerce | **`bnbagent-sdk`** (`pip install bnbagent[server]`) | ERC-8004 identity + ERC-8183 provider + x402 signer, all verified |
 | Server | **FastAPI + Uvicorn** | `create_erc8183_app()` mounts here; also serves thin demo UI |
 | Data | **CMC MCP** (`https://mcp.coinmarketcap.com/mcp`, `X-CMC-MCP-API-KEY`) + `cmc-x402` for premium pulls | 12 tools, 4 planes |
-| Compute | **pandas + numpy** | z-scores, regime rules, backtest — rule-based, legible |
+| Compute | **numpy** | z-scores, regime rules, walk-forward backtest + optimizer — rule-based, legible |
 | Skill | **`SKILL.md`** (Anthropic Agent Skills fmt) in `skill/bourse/` | Track-2 deliverable, Marketplace-submittable |
 | Chains | **BSC** (ERC-8183 escrow/settlement) + **Base 8453** (CMC x402/USDC) | per verified docs |
 | Demo UI | **single `landing/index.html`** (static, Vercel) | thin — judges grade the Skill, not the UI |
@@ -89,7 +89,7 @@ bourse/
   bourse/ingest.py               # CMC MCP client (4 planes)
   bourse/engine.py               # divergence + regime (z-scores, rules)
   bourse/spec.py                 # strategy-spec generator (bourse.signal.v1)
-  bourse/backtest.py             # pandas backtest -> Sharpe/maxDD/winrate
+  bourse/backtest.py             # numpy walk-forward backtest -> Sharpe/maxDD/winrate
   server/app.py                  # FastAPI + create_erc8183_app(on_job=...)
   server/identity.py             # ERC-8004 registration
   clients/buyer.py               # ERC8183Client demo (negotiate->settle)

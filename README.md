@@ -59,7 +59,7 @@ Bourse separates concerns into a high-performance compute engine (Python), an on
 
 | Layer | Technology | Purpose |
 | :--- | :--- | :--- |
-| **Core Engine** | Python 3.11+, NumPy, Pandas | Divergence engine, regime rules, backtest math |
+| **Core Engine** | Python 3.11+, NumPy | Divergence engine, regime rules, walk-forward backtest + optimizer math |
 | **API / Server** | FastAPI, Uvicorn | ERC-8183 provider hosting, demo UI gateway |
 | **Agent Hub** | CoinMarketCap Agent Hub Skill | Live signal retrieval across 4 distinct data planes |
 | **Commerce / Escrow** | BNB AI Agent SDK (ERC-8183, ERC-8004, X402Signer) | On-chain registration, escrowed jobs, settlement |
@@ -202,7 +202,7 @@ make ci              # Run the complete CI/CD checks (ruff, mypy, tests, securit
 
 ## 🧪 Testing & CI
 
-Bourse maintains **100% line coverage** across the entire core codebase (302 statements). 
+Bourse maintains **100% line coverage** across the entire core codebase (385 statements). 
 
 ### CI/CD Pipeline
 Running `make ci` executes our local validation gate:
@@ -230,12 +230,14 @@ bourse/engine.py              # Divergence + regime engine (z-scores, rules)
 bourse/spec.py                # Bourse strategy specification generator (bourse.signal.v1)
 bourse/ingest.py              # CMC MCP client (live) + REST (history) + fixtures
 bourse/backtest.py            # Walk-forward backtest (Sharpe, max drawdown, win rate)
+bourse/walkforward.py         # Walk-forward weight optimizer (train/test split, out-of-sample Sharpe)
 scripts/signal.py             # CLI: ranked board / token explanation / live discovery
 server/app.py                 # ERC-8183 provider (FastAPI)
 server/identity.py            # ERC-8004 identity registration
 clients/buyer.py              # ERC8183Client buyer simulation
 scripts/probe_cmc_history.py  # Day-1 data gate checklist
 scripts/backtest.py           # CLI backtest wrapper with ASCII chart rendering
+scripts/optimize_weights.py   # Walk-forward optimizer CLI (in-sample vs out-of-sample, multi-token)
 scripts/settle.py             # BSC permissionless settlement runner
 scripts/seed.py               # Deterministic fixture seeding script
 scripts/check_submission_readiness.py  # Pre-submit readiness validator

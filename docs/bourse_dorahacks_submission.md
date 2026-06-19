@@ -40,7 +40,7 @@ Bourse was inspired by the systematic exploitation of retail traders and naive t
 
 ### How we built it
 Bourse is architected to separate data ingestion, compute optimization, and on-chain commerce:
-*   **Core Logic**: Built with Python 3.11+, leveraging NumPy and Pandas for high-speed mathematical normalization, regime matrix computation, and walk-forward backtesting.
+*   **Core Logic**: Built with Python 3.11+, leveraging NumPy for high-speed mathematical normalization, regime matrix computation, and walk-forward backtesting + optimization.
 *   **Agent Hub (MCP)**: Utilizes the CoinMarketCap MCP Client interface to pull derivatives data, Technical Analysis metrics, and news sentiment scores dynamically.
 *   **Agentic Commerce**: Integrated the **BNB AI Agent SDK** to manage agent identity (ERC-8004) and job escrow contracts (`AgenticCommerce`, `EvaluatorRouter`, and `OptimisticPolicy`) on BSC Testnet. 
 *   **Micropayments (x402)**: Used the X402Signer to enforce per-request USDC spend limits via EIP-3009.
