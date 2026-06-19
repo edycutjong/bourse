@@ -20,7 +20,7 @@ This document contains the complete details required for the DoraHacks BUIDL sub
     *   *Agentic Capabilities*:
         1. **Autonomous Perception**: Ingests market states by calling CoinMarketCap Agent Hub (MCP) tools dynamically.
         2. **On-Chain Identity & Autonomy**: Registered via **ERC-8004** on BSC Testnet (mega-fueled, gas-free registration) as `Agent ID: 1401`. It runs as an autonomous server daemon listening for and negotiating service jobs.
-        3. **Reasoning & Synthesis**: Automatically нормализует multi-source data into rolling z-scores, matches regime matrices, and outputs actionable signed strategy specifications.
+        3. **Reasoning & Synthesis**: Automatically normalizes multi-source data into rolling z-scores, matches regime matrices, and outputs actionable signed strategy specifications.
         4. **Machine-to-Machine Commerce**: Operates a two-sided financial logic. It pays to consume data via **x402 (EIP-3009)** on Base network, and programmatically earns tokens by selling strategy deliverables via **ERC-8183 escrows** on BSC Testnet.
 
 ---
@@ -59,7 +59,7 @@ Bourse implements a strict, multi-stage engineering harness ensuring code correc
 
 ### Challenges we ran into
 *   **EVM Test Automation in CI**: Since Bourse executes actual smart contract transactions (creating jobs, escrowing funds, and settling payments) on BSC Testnet via the `bnbagent-sdk`, testing this programmatically in an air-gapped GitHub Actions container presented a challenge. We resolved this by building an in-memory mock harness utilizing Python's patch framework to stub JSON-RPC requests, while providing a comprehensive local walkthrough script (`scripts/run_terminal_demo.py`) that clears the terminal and types out commands to easily record live BSC Testnet transactions.
-*   **Cross-Regime Metric Normalization**: Comparing a social sentiment score (0-100) with a derivatives funding rate (percentage) or whale net flow (token volume) was challenging. We solved this by implementing rolling z-scores that normalize all variables into standard deviations from the mean. We then built a grid search optimizer that tweaks the weighting of each data plane depending on backtest Sharpe metrics, maximizing the strategy's signal reliability.
+*   **Cross-Regime Metric Normalization**: Comparing a social sentiment score (0-100) with a derivatives funding rate (percentage) or whale net flow (token volume) was challenging. We solved this by implementing rolling z-scores that normalize all variables into standard deviations from the mean. We then built a **walk-forward** weight optimizer: it grid-searches each data plane's weighting on a training window and validates the choice **out-of-sample** on the next, unseen window (pooled across multiple tokens), so the reported Sharpe reflects generalization rather than in-sample curve-fitting.
 
 ### What we learned
 We realized that agentic Web3 commerce doesn't need complex, heavy oracle protocols. By leveraging the BNB SDK's ERC-8183 optimistic escrow and dispute policy, we can construct secure, sub-second micropayments for strategy data directly on-chain.
@@ -76,7 +76,7 @@ We realized that agentic Web3 commerce doesn't need complex, heavy oracle protoc
 *   **Team Name**: Bourse Strategy Lab
 *   **Team Description**: Single-developer submission focused on AI-native quant tools. Built with a production-grade Python/TypeScript engineering harness (225 tests, 100% coverage, 5-stage parallel CI/CD).
 *   **Contact to Organizer**: 
-    > Hi BNB Hackathon team! I am excited to submit Bourse. It fuses CoinMarketCap Agent Hub metrics to construct a real-time behavioral divergence engine, allowing autonomous agents to fade crowd euphoria on-chain. The project is fully functional, with registered identities and escrows running live on BSC Testnet.
+    > Hi BNB Hackathon team! I am excited to submit Bourse. It fuses CoinMarketCap Agent Hub metrics to construct a real-time behavioral divergence engine, allowing autonomous agents to fade crowd euphoria on-chain. The project is fully functional, with a complete register → fund → settle job lifecycle executed live on BSC Testnet (job 174 → COMPLETED; all tx hashes in PROOF.md).
     > - GitHub: https://github.com/edycutjong/bourse
     > - Walkthrough Video: https://youtu.be/Y5YgTCEqJqw
     > - Live Dashboard: Open `landing/index.html` locally or visit http://localhost:8003/ (with server running).
@@ -113,4 +113,4 @@ We realized that agentic Web3 commerce doesn't need complex, heavy oracle protoc
 *   **E2E Testing**: ✅ Puppeteer script ([scripts/record-bourse.mjs](file:///Users/edycu/Projects/DemoStudio/scripts/record-bourse.mjs)) recording the entire dashboard walkthrough.
 *   **Security (DevSecOps)**: ✅ Automated dependency checking with `pip-audit` + local secrets and test validation checks on commit.
 *   **CI/CD Pipeline**: ✅ GitHub Actions pipeline executing linters, typecheck, tests, and security scans in parallel.
-*   **Performance & Observability**: ✅ Grid search optimizer for weights + live stream logger console on the dashboard.
+*   **Performance & Observability**: ✅ Walk-forward (out-of-sample) weight optimizer + live stream logger console on the dashboard.
