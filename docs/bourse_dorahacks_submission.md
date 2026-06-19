@@ -35,7 +35,7 @@ Bourse was inspired by the systematic exploitation of retail traders and naive t
 2.  **Computes Behavioral Divergence**: Normalizes disparate data inputs into rolling z-scores to calculate a real-time Divergence rating (from -100 to +100) indicating if crowd euphoria is decoupled from smart money.
 3.  **Emits Strategy Specifications**: Generates a standardized, machine-readable `bourse.signal.v1` YAML strategy detailing entry triggers (e.g. price vs EMA gates), exits, ATR-based stops, and position sizes scaled to the market regime.
 4.  **Simulates Programmatic Commerce**: Exposes an ERC-8183 agentic interface. Any buyer agent can query the Bourse status, deposit USDC escrow on the BSC Testnet, automatically receive the signed divergence strategy payload, and optimisticly settle after a 24-hour dispute window.
-5.  **Performs Walk-Forward Optimization**: Implements an offline backtest engine and weights optimizer that performs walk-forward grid search over z-score weights, maximizing strategy Sharpe ratio (e.g. boosting CAKE Sharpe ratio from 1.74 to 6.28).
+5.  **Performs Walk-Forward Optimization**: Implements an offline backtest engine plus a walk-forward weights optimizer that fits the z-score weights on a train window and reports the **out-of-sample** Sharpe on the next, unseen window — across multiple tokens, pooling the results. The in-sample number (e.g. CAKE's grid-search peak of 6.28) is shown only as a contrast to the honest out-of-sample figure; single-fixture in-sample tuning would be overfitting.
 6.  **Interactive Web3 Dashboard**: Provides a simulation dashboard where users can trigger the end-to-end buyer agent commerce loop, watch live execution logs stream from BSC Testnet, visualize the equity curves as dynamic SVGs, and settle escrows with chiptune sound effects and confetti.
 
 ### How we built it
@@ -52,7 +52,7 @@ Bourse implements a strict, multi-stage engineering harness ensuring code correc
 | Layer | Technology | Details |
 | :--- | :--- | :--- |
 | **Code Quality** | Ruff (Linter & Formatter), Mypy | Strict static type checking and zero code styling warnings |
-| **Unit Testing** | Pytest, Pytest-Cov | **161 passing tests** with **100% statement coverage** across all core modules |
+| **Unit Testing** | Pytest, Pytest-Cov | **225 passing tests** with **100% statement coverage** across all core modules |
 | **E2E Testing** | Puppeteer, PuppeteerScreenRecorder | Complete headless browser walkthrough verifying dashboard state transitions |
 | **Security Audit** | pip-audit, Custom secrets scanner | Automated validation against known CVEs and committed keys check |
 | **CI/CD Pipeline** | GitHub Actions (`ci.yml`) | Multi-stage pipeline running checks in parallel for maximum build speed |
@@ -74,7 +74,7 @@ We realized that agentic Web3 commerce doesn't need complex, heavy oracle protoc
 ## 3. Team
 
 *   **Team Name**: Bourse Strategy Lab
-*   **Team Description**: Single-developer submission focused on AI-native quant tools. Built with a production-grade Python/TypeScript engineering harness (161 tests, 100% coverage, 5-stage parallel CI/CD).
+*   **Team Description**: Single-developer submission focused on AI-native quant tools. Built with a production-grade Python/TypeScript engineering harness (225 tests, 100% coverage, 5-stage parallel CI/CD).
 *   **Contact to Organizer**: 
     > Hi BNB Hackathon team! I am excited to submit Bourse. It fuses CoinMarketCap Agent Hub metrics to construct a real-time behavioral divergence engine, allowing autonomous agents to fade crowd euphoria on-chain. The project is fully functional, with registered identities and escrows running live on BSC Testnet.
     > - GitHub: https://github.com/edycutjong/bourse
@@ -109,7 +109,7 @@ We realized that agentic Web3 commerce doesn't need complex, heavy oracle protoc
 ## 6. Engineering Harness Summary
 
 *   **Code Quality**: ✅ Strict type safety via `mypy` + linting and auto-formatting via `ruff`.
-*   **Unit Testing**: ✅ Pytest harness running 161 tests. Core engine verified with **100% line coverage** (261/261 statements).
+*   **Unit Testing**: ✅ Pytest harness running 225 tests. Core engine verified with **100% line coverage** (385/385 statements).
 *   **E2E Testing**: ✅ Puppeteer script ([scripts/record-bourse.mjs](file:///Users/edycu/Projects/DemoStudio/scripts/record-bourse.mjs)) recording the entire dashboard walkthrough.
 *   **Security (DevSecOps)**: ✅ Automated dependency checking with `pip-audit` + local secrets and test validation checks on commit.
 *   **CI/CD Pipeline**: ✅ GitHub Actions pipeline executing linters, typecheck, tests, and security scans in parallel.

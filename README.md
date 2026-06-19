@@ -187,9 +187,9 @@ make seed            # Write deterministic demo fixtures (offline execution prep
 make signal          # View the ranked divergence board (offline, mock mode)
 make signal-cake     # Generate 4-plane "why" details + spec + backtest for CAKE
 make backtest        # Run walk-forward backtest and view ASCII equity curve
-python scripts/optimize_weights.py   # Run grid search optimizer on engine weights (Sharpe goes from 1.74 to 6.28)
+python scripts/optimize_weights.py   # Walk-forward optimizer: fits weights on a train window, reports OUT-OF-SAMPLE Sharpe on the next unseen window, across tokens (in-sample vs OOS shown side by side)
 python scripts/execute_strategy.py   # PancakeSwap V3 Strategy Execution Copilot (executes strategy on BSC Testnet)
-make test            # Run the 161-test suite and verify all pass
+make test            # Run the 225-test suite and verify all pass
 make test-coverage   # Run the test suite and display coverage report (100% lines)
 make ci              # Run the complete CI/CD checks (ruff, mypy, tests, security, readiness)
 ```

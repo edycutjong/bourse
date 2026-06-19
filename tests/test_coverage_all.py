@@ -84,7 +84,7 @@ def test_main_branch_serve():
 
 def test_app_main_block_serve(monkeypatch):
     monkeypatch.setenv("WALLET_PASSWORD", "mock_password")
-    monkeypatch.setenv("PRIVATE_KEY", "0x4e582560bc6ffb3131547778dc9106d2956035113ce76fc5936ac1ed28402caa")
+    monkeypatch.setenv("PRIVATE_KEY", "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80")
     monkeypatch.setenv("ERC8183_SERVICE_PRICE", "100")
     with patch("uvicorn.run") as mock_run:
         mock_app = MagicMock()
@@ -116,7 +116,7 @@ def test_register_missing_password(monkeypatch):
 
 def test_register_success(monkeypatch):
     monkeypatch.setenv("WALLET_PASSWORD", "mock_password")
-    monkeypatch.setenv("PRIVATE_KEY", "0x4e582560bc6ffb3131547778dc9106d2956035113ce76fc5936ac1ed28402caa")
+    monkeypatch.setenv("PRIVATE_KEY", "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80")
     monkeypatch.setenv("NETWORK", "bsc-testnet")
     monkeypatch.setenv("ERC8183_AGENT_URL", "http://localhost:8003/erc8183")
 
@@ -134,7 +134,7 @@ def test_register_success(monkeypatch):
 
 def test_identity_main_block(monkeypatch):
     monkeypatch.setenv("WALLET_PASSWORD", "mock_password")
-    monkeypatch.setenv("PRIVATE_KEY", "0x4e582560bc6ffb3131547778dc9106d2956035113ce76fc5936ac1ed28402caa")
+    monkeypatch.setenv("PRIVATE_KEY", "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80")
     monkeypatch.setenv("NETWORK", "bsc-testnet")
     monkeypatch.setenv("ERC8183_AGENT_URL", "http://localhost:8003/erc8183")
 
@@ -168,7 +168,7 @@ class MockJobStatus:
 
 def test_buyer_success(monkeypatch):
     monkeypatch.setenv("WALLET_PASSWORD", "mock_password")
-    monkeypatch.setenv("PRIVATE_KEY", "0x4e582560bc6ffb3131547778dc9106d2956035113ce76fc5936ac1ed28402caa")
+    monkeypatch.setenv("PRIVATE_KEY", "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80")
     monkeypatch.setenv("NETWORK", "bsc-testnet")
     monkeypatch.setenv("ERC8183_AGENT_URL", "http://localhost:8003/erc8183")
     monkeypatch.setenv("BOURSE_PROVIDER_ADDRESS", "0xprovider")
@@ -202,7 +202,7 @@ def test_buyer_success(monkeypatch):
 
 def test_buyer_timeout(monkeypatch):
     monkeypatch.setenv("WALLET_PASSWORD", "mock_password")
-    monkeypatch.setenv("PRIVATE_KEY", "0x4e582560bc6ffb3131547778dc9106d2956035113ce76fc5936ac1ed28402caa")
+    monkeypatch.setenv("PRIVATE_KEY", "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80")
 
     mock_wallet = MagicMock()
     mock_client = MagicMock()
@@ -230,7 +230,7 @@ def test_buyer_timeout(monkeypatch):
 
 def test_buyer_main_block(monkeypatch):
     monkeypatch.setenv("WALLET_PASSWORD", "mock_password")
-    monkeypatch.setenv("PRIVATE_KEY", "0x4e582560bc6ffb3131547778dc9106d2956035113ce76fc5936ac1ed28402caa")
+    monkeypatch.setenv("PRIVATE_KEY", "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80")
     monkeypatch.setenv("NETWORK", "bsc-testnet")
     monkeypatch.setenv("ERC8183_AGENT_URL", "http://localhost:8003/erc8183")
     monkeypatch.setenv("BOURSE_PROVIDER_ADDRESS", "0xprovider")
@@ -274,7 +274,7 @@ def test_settle_missing_password(monkeypatch):
 
 def test_settle_success(monkeypatch):
     monkeypatch.setenv("WALLET_PASSWORD", "mock_password")
-    monkeypatch.setenv("PRIVATE_KEY", "0x4e582560bc6ffb3131547778dc9106d2956035113ce76fc5936ac1ed28402caa")
+    monkeypatch.setenv("PRIVATE_KEY", "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80")
     monkeypatch.setenv("NETWORK", "bsc-testnet")
 
     mock_wallet = MagicMock()
@@ -293,7 +293,7 @@ def test_settle_success(monkeypatch):
 
 def test_settle_main_block(monkeypatch):
     monkeypatch.setenv("WALLET_PASSWORD", "mock_password")
-    monkeypatch.setenv("PRIVATE_KEY", "0x4e582560bc6ffb3131547778dc9106d2956035113ce76fc5936ac1ed28402caa")
+    monkeypatch.setenv("PRIVATE_KEY", "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80")
     monkeypatch.setenv("NETWORK", "bsc-testnet")
 
     mock_wallet = MagicMock()
@@ -662,44 +662,38 @@ def test_fetch_fear_greed_history_success(monkeypatch):
         assert res == [45.0, 50.0]
 
 
-def test_optimize_weights_success(monkeypatch):
+def test_optimize_weights_success(monkeypatch, capsys):
     import optimize_weights  # type: ignore
-    import bourse.engine
-    # Restore original weights afterwards to avoid side-effects on other tests
-    orig_w = dict(bourse.engine.W)
-    try:
-        optimize_weights.main()
-    finally:
-        bourse.engine.W.update(orig_w)
+    # Stub the (slow) grid search; this test covers main()'s reporting, not the optimizer math.
+    canned = {
+        "tokens": ["CAKE"],
+        "per_token": {"CAKE": {"in_sample_sharpe": 6.28, "oos_sharpe": 1.9, "n_folds": 3}},
+        "pooled_oos_sharpe": 1.9,
+        "mean_in_sample_sharpe": 6.28,
+        "oos_n": 41,
+    }
+    monkeypatch.setattr(optimize_weights, "optimize_multi", lambda histories, **k: canned)
+    optimize_weights.main()
+    out = capsys.readouterr().out
+    assert "out-of-sample" in out.lower()
+    assert "6.28" in out and "1.90" in out
 
 
 def test_optimize_weights_missing_fixture(monkeypatch):
     import optimize_weights  # type: ignore
-    original_exists = os.path.exists
-    monkeypatch.setattr(os.path, "exists", lambda p: False if "backtest_cake.json" in p else original_exists(p))
-    with patch("sys.argv", ["optimize_weights.py"]):
-        with pytest.raises(SystemExit):
-            optimize_weights.main()
+    # No fixtures found -> clean exit with a hint to run the seeder.
+    monkeypatch.setattr(optimize_weights, "load_histories", lambda root: {})
+    with pytest.raises(SystemExit):
+        optimize_weights.main()
 
 
-def test_optimize_weights_exception(monkeypatch):
+def test_optimize_weights_load_histories():
     import optimize_weights  # type: ignore
-    import bourse.engine
-    orig_w = dict(bourse.engine.W)
-    monkeypatch.setattr(optimize_weights, "STEPS", [0.0, 1.0])
-    
-    mock_run = MagicMock()
-    mock_run.side_effect = [
-        {"sharpe": 1.74},
-        {"sharpe": 2.0},
-        ValueError("mock error")
-    ] + [{"sharpe": 1.0}] * 20
-    
-    with patch("optimize_weights.run_backtest", mock_run):
-        try:
-            optimize_weights.main()
-        finally:
-            bourse.engine.W.update(orig_w)
+    root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    histories = optimize_weights.load_histories(root)
+    # filenames backtest_<token>.json map to upper-cased tokens with the backtest schema
+    assert "CAKE" in histories
+    assert {"price", "narrative_heat", "whale_net_flow"} <= set(histories["CAKE"])
 
 
 def test_execute_strategy_no_action(monkeypatch):
@@ -716,7 +710,7 @@ def test_execute_strategy_success(monkeypatch):
     import execute_strategy  # type: ignore
     # Mock environment
     monkeypatch.setenv("WALLET_PASSWORD", "mock_password")
-    monkeypatch.setenv("PRIVATE_KEY", "0x4e582560bc6ffb3131547778dc9106d2956035113ce76fc5936ac1ed28402caa")
+    monkeypatch.setenv("PRIVATE_KEY", "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80")
     
     mock_wallet = MagicMock()
     mock_client = MagicMock()
@@ -832,7 +826,7 @@ def test_simulation_state_snapshot_and_redaction():
     assert snap["tx_fund"] == "0x123"
     
     # Test exception redaction of PRIVATE_KEY and WALLET_PASSWORD
-    mock_pk = "0x4e582560bc6ffb3131547778dc9106d2956035113ce76fc5936ac1ed28402caa"
+    mock_pk = "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
     mock_pw = "secret_wallet_password_123"
     
     def mock_wallet_init(*args, **kwargs):
@@ -1000,7 +994,7 @@ def test_trigger_simulation_spawns_thread(monkeypatch):
     from server.simulation import trigger_simulation, state
     
     state.reset()
-    monkeypatch.setenv("PRIVATE_KEY", "0x4e582560bc6ffb3131547778dc9106d2956035113ce76fc5936ac1ed28402caa")
+    monkeypatch.setenv("PRIVATE_KEY", "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80")
     
     with patch("threading.Thread") as mock_thread:
         res = trigger_simulation()
@@ -1181,9 +1175,11 @@ def test_execute_strategy_main_block(monkeypatch):
 
 def test_optimize_weights_main_block(monkeypatch):
     import runpy
-    # Missing fixture raises SystemExit inside main(), executing the main block
-    original_exists = os.path.exists
-    monkeypatch.setattr(os.path, "exists", lambda p: False if "backtest_cake.json" in p else original_exists(p))
+    import glob as _glob
+    # Force "no fixtures" so the __main__ block hits the fast SystemExit path (no grid search).
+    real_glob = _glob.glob
+    monkeypatch.setattr(_glob, "glob",
+                        lambda pat, *a, **k: [] if "backtest_" in pat else real_glob(pat, *a, **k))
     with patch("sys.argv", ["optimize_weights.py"]):
         with pytest.raises(SystemExit):
             runpy.run_path("scripts/optimize_weights.py", run_name="__main__")

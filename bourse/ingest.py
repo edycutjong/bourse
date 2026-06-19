@@ -202,7 +202,7 @@ class MCPClient:
         self._post("initialize", {
             "protocolVersion": self.PROTOCOL_VERSION,
             "capabilities": {},
-            "clientInfo": {"name": "bourse", "version": "1.0.1"},
+            "clientInfo": {"name": "bourse", "version": "1.1.0"},
         })
         self._post("notifications/initialized", {}, notify=True)
         self._initialized = True

@@ -27,8 +27,7 @@ def _position(direction: str) -> int:
     return {"long": 1, "short": -1, "none": 0}.get(direction, 0)
 
 
-def run_backtest(history: dict, *, token: str = "TOKEN", window: int = 5,
-                 fee_bps: float = 10.0, periods_per_year: int = 365) -> dict:
+def _validate(history: dict, window: int) -> tuple[np.ndarray, int]:
     price = np.asarray(history["price"], dtype=float)
     n = price.size
     if n < window + 2:
@@ -36,12 +35,34 @@ def run_backtest(history: dict, *, token: str = "TOKEN", window: int = 5,
     for k in (*_WINDOW_SERIES, "fear_greed"):
         if len(history[k]) != n:
             raise ValueError(f"series '{k}' has length {len(history[k])}, expected {n}")
-    coverage = float(history.get("coverage", 1.0))
+    return price, n
 
+
+def sharpe_ratio(rets, periods_per_year: int = 365) -> float:
+    """Annualized Sharpe of a return series (0 if empty or zero-variance)."""
+    r = np.asarray(rets, dtype=float)
+    if r.size == 0:
+        return 0.0
+    sd = r.std()
+    return float(r.mean() / sd * np.sqrt(periods_per_year)) if sd > 0 else 0.0
+
+
+def _simulate(history: dict, price: np.ndarray, *, token: str, window: int,
+              fee_bps: float, t0: int, t1: int) -> tuple[list[float], int, int, int]:
+    """Per-step net returns for decision steps t in [t0, t1).
+
+    The position at step t is computed from the trailing `window` of each plane (oldest..
+    latest, ending at t) — context only, never future data — and realized against the
+    t -> t+1 price move, minus a turnover fee. `prev_pos` starts flat, so each call is a
+    self-contained evaluation of [t0, t1); that is what lets walk-forward score an
+    out-of-sample fold without leaking the previous fold's open position. Returns
+    (rets, trades, active, wins).
+    """
+    coverage = float(history.get("coverage", 1.0))
     rets: list[float] = []
     prev_pos = 0
     wins = active = trades = 0
-    for t in range(window - 1, n - 1):
+    for t in range(t0, t1):
         lo = t - window + 1
         planes = Planes(
             narrative_heat=history["narrative_heat"][lo:t + 1],
@@ -65,9 +86,12 @@ def run_backtest(history: dict, *, token: str = "TOKEN", window: int = 5,
                 wins += 1
         rets.append(r)
         prev_pos = pos
+    return rets, trades, active, wins
 
+
+def _metrics(rets: list[float], trades: int, active: int, wins: int,
+             periods_per_year: int) -> dict:
     r = np.asarray(rets, dtype=float)
-    
     # Catch empty history to prevent RuntimeWarning on r.std()
     if r.size == 0:
         return {
@@ -79,15 +103,12 @@ def run_backtest(history: dict, *, token: str = "TOKEN", window: int = 5,
             "final_return": 0.0,
             "equity_curve": [],
         }
-
     equity = np.cumprod(1.0 + r)
-    sd = r.std()
-    sharpe = float(r.mean() / sd * np.sqrt(periods_per_year)) if sd > 0 else 0.0
     peak = np.maximum.accumulate(equity)
     max_dd = float((1.0 - equity / peak).max()) if equity.size else 0.0
     win_rate = wins / active if active else 0.0
     return {
-        "sharpe": round(sharpe, 2),
+        "sharpe": round(sharpe_ratio(r, periods_per_year), 2),
         "max_dd": round(max_dd, 4),
         "win_rate": round(win_rate, 4),
         "n_trades": trades,
@@ -95,3 +116,12 @@ def run_backtest(history: dict, *, token: str = "TOKEN", window: int = 5,
         "final_return": round(float(equity[-1] - 1.0), 4) if equity.size else 0.0,
         "equity_curve": [round(float(x), 5) for x in equity],
     }
+
+
+def run_backtest(history: dict, *, token: str = "TOKEN", window: int = 5,
+                 fee_bps: float = 10.0, periods_per_year: int = 365) -> dict:
+    price, n = _validate(history, window)
+    rets, trades, active, wins = _simulate(
+        history, price, token=token, window=window, fee_bps=fee_bps,
+        t0=window - 1, t1=n - 1)
+    return _metrics(rets, trades, active, wins, periods_per_year)

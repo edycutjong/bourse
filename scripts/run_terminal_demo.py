@@ -23,18 +23,24 @@ def type_command(cmd: str):
     print("\n\033[1;32m$ " + cmd + "\033[0m", flush=True)
     time.sleep(0.5)
 
-def run_cmd_and_stream(args: list[str], cwd: str = ROOT):
-    # Merge existing environment with .env values
+def demo_env() -> dict:
+    """Build the child-process environment for the demo.
+
+    Secrets are NEVER hard-coded here: PRIVATE_KEY must come from the environment / .env
+    (see .env.example). Only non-sensitive demo defaults are filled in. If no key is set,
+    the on-chain settlement beat is skipped with a clear hint rather than signing with a
+    committed key.
+    """
     env = os.environ.copy()
-    
-    # Ensure default environment values are present if not set
-    if "WALLET_PASSWORD" not in env:
-        env["WALLET_PASSWORD"] = "secret"
-    if "PRIVATE_KEY" not in env:
-        env["PRIVATE_KEY"] = "0x4e582560bc6ffb3131547778dc9106d2956035113ce76fc5936ac1ed28402caa"
-    if "NETWORK" not in env:
-        env["NETWORK"] = "bsc-testnet"
-        
+    env.setdefault("WALLET_PASSWORD", "secret")  # local keystore password, not a chain secret
+    env.setdefault("NETWORK", "bsc-testnet")
+    if "PRIVATE_KEY" not in env and "AGENT_PRIVATE_KEY" not in env:
+        print("\033[1;33m⚠️  PRIVATE_KEY not set — on-chain beats will be skipped. "
+              "Add it to .env (see .env.example) to run settlement.\033[0m", flush=True)
+    return env
+
+def run_cmd_and_stream(args: list[str], cwd: str = ROOT):
+    env = demo_env()
     p = subprocess.Popen(
         args,
         stdout=subprocess.PIPE,
@@ -68,14 +74,7 @@ def main():
     # 1. Manage server background process
     if not is_port_in_use(server_port):
         print("\n⚙️  Bourse server is not running on port 8003. Starting it now...")
-        env = os.environ.copy()
-        if "WALLET_PASSWORD" not in env:
-            env["WALLET_PASSWORD"] = "secret"
-        if "PRIVATE_KEY" not in env:
-            env["PRIVATE_KEY"] = "0x4e582560bc6ffb3131547778dc9106d2956035113ce76fc5936ac1ed28402caa"
-        if "NETWORK" not in env:
-            env["NETWORK"] = "bsc-testnet"
-            
+        env = demo_env()
         server_proc = subprocess.Popen(
             [sys.executable, "server/app.py", "--serve"],
             cwd=ROOT,

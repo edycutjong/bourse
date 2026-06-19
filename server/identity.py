@@ -32,7 +32,7 @@ def register() -> dict:
     agent_uri = sdk.generate_agent_uri(
         name="bourse",
         description="Crowd-vs-smart-money divergence signal — hireable via ERC-8183.",
-        endpoints=[AgentEndpoint(name="ERC-8183", endpoint=f"{base}/status", version="1.0.1")],
+        endpoints=[AgentEndpoint(name="ERC-8183", endpoint=f"{base}/status", version="1.1.0")],
     )
     result = sdk.register_agent(agent_uri=agent_uri)
     print(f"registered Bourse: agentId={result.get('agentId')} "

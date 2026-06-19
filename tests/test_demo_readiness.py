@@ -116,7 +116,8 @@ def test_run_terminal_demo_run_cmd_and_stream(monkeypatch):
         mock_popen.assert_called_once()
         called_env = mock_popen.call_args[1]["env"]
         assert called_env["WALLET_PASSWORD"] == "secret"
-        assert called_env["PRIVATE_KEY"] == "0x4e582560bc6ffb3131547778dc9106d2956035113ce76fc5936ac1ed28402caa"
+        # PRIVATE_KEY is never hard-coded: absent from env -> absent from the child env
+        assert "PRIVATE_KEY" not in called_env
         assert called_env["NETWORK"] == "bsc-testnet"
         
     # Test with existing env vars + stdout is None
@@ -165,9 +166,10 @@ def test_run_terminal_demo_main_starts_server_success(monkeypatch):
     mock_popen.assert_called_once()
     called_env = mock_popen.call_args[1]["env"]
     assert called_env["WALLET_PASSWORD"] == "secret"
-    assert called_env["PRIVATE_KEY"] == "0x4e582560bc6ffb3131547778dc9106d2956035113ce76fc5936ac1ed28402caa"
+    # PRIVATE_KEY is never hard-coded: absent from env -> absent from the child env
+    assert "PRIVATE_KEY" not in called_env
     assert called_env["NETWORK"] == "bsc-testnet"
-    
+
     assert mock_run_stream.call_count == 3
     mock_server_proc.terminate.assert_called_once()
     mock_server_proc.wait.assert_called_once()
