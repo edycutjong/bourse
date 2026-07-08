@@ -8,7 +8,10 @@ fastapi>=0.110
 uvicorn>=0.29
 # bnbagent-sdk (verified on PyPI: bnbagent 0.3.6). Server extra pulls FastAPI+Uvicorn.
 # ERC-8004 identity + ERC-8183 commerce + x402 signer live here.
-bnbagent[server]>=0.3.6
+# Pinned <0.4.0: 0.4.0 removed bnbagent.erc8183.server (create_erc8183_app) and the
+# [server] extra, which server/app.py:build_app() depends on. Revisit when migrating
+# to the new ERC8183JobOps/funded_job_watcher serving pattern.
+bnbagent[server]>=0.3.6,<0.4.0
 # tests
 pytest>=8.0
 httpx>=0.28.1
