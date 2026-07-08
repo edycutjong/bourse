@@ -1,0 +1,58 @@
+name: 🐛 Bug Report
+description: Report a reproducible problem in Bourse
+title: "bug: <short summary>"
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug. Please **do not** file security
+        vulnerabilities here — follow the [Security Policy](../security/policy).
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: A clear description of the bug and what you expected instead.
+      placeholder: When I run `make signal`, ...
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      description: Minimal, deterministic steps. Prefer offline fixtures over live keys.
+      placeholder: |
+        1. `make seed`
+        2. `make signal-cake`
+        3. See error ...
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs / output
+      description: Paste the traceback or command output. This is automatically formatted as code.
+      render: shell
+  - type: input
+    id: version
+    attributes:
+      label: Version / commit
+      description: Output of `git rev-parse --short HEAD` or the release tag.
+      placeholder: 1bc23be
+    validations:
+      required: true
+  - type: dropdown
+    id: mode
+    attributes:
+      label: Run mode
+      options:
+        - Offline (fixtures)
+        - Live (CMC / on-chain)
+    validations:
+      required: true
+  - type: input
+    id: env
+    attributes:
+      label: Environment
+      description: OS and Python version.
+      placeholder: macOS 15 / Python 3.12
