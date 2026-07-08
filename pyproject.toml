@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "bourse-signal"
-version = "1.1.2"
+version = "1.2.0"
 description = "Crowd-vs-smart-money divergence engine + CMC Skill, hireable on-chain via ERC-8183"
 requires-python = ">=3.11"
 dependencies = ["requests>=2.31", "numpy>=1.26", "pyyaml>=6.0", "python-dotenv>=1.0"]
