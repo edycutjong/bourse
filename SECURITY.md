@@ -2,12 +2,13 @@
 
 ## Supported Versions
 
-We actively support and patch security vulnerabilities in the following versions of Bourse:
+Bourse ships from `main`. Security fixes land on the latest release line;
+older tags are not patched.
 
-| Version | Supported |
-| ------- | --------- |
-| v1.0.x  | ✅ Yes    |
-| < v1.0  | ❌ No     |
+| Version        | Supported |
+| -------------- | --------- |
+| `main` / latest release | ✅ Yes |
+| older tags     | ❌ No     |
 
 ## Reporting a Vulnerability
 
@@ -15,7 +16,13 @@ We take the security of Bourse, our smart contracts, and agentic commerce workfl
 
 ### How to Report
 
-Please send an email to **security@bourse.intelligence** (or the project maintainer's email listed in the repository settings) with the following details:
+Use one of these private channels:
+
+1. **GitHub Security Advisories** (preferred) — click **Report a vulnerability**
+   on the repository's [Security tab](https://github.com/edycutjong/bourse/security/advisories/new).
+2. **Email** — `edy.cu@live.com` with the subject line `SECURITY: bourse`.
+
+Please include the following details:
 1. **Description**: A clear description of the vulnerability.
 2. **Steps to Reproduce**: A detailed description of the steps (or proof-of-concept script) needed to reproduce the issue.
 3. **Impact**: An evaluation of the potential impact (e.g., wallet key exposure, budget drain, contract state manipulation).

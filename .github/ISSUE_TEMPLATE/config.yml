@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 🔒 Report a security vulnerability
+    url: https://github.com/edycutjong/bourse/security/advisories/new
+    about: Please report security issues privately via GitHub Security Advisories, not public issues.
+  - name: 📖 Documentation & README
+    url: https://github.com/edycutjong/bourse#readme
+    about: Setup, verification commands, and architecture are documented in the README.

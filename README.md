@@ -242,3 +242,26 @@ scripts/settle.py             # BSC permissionless settlement runner
 scripts/seed.py               # Deterministic fixture seeding script
 scripts/check_submission_readiness.py  # Pre-submit readiness validator
 ```
+
+---
+
+## 🤝 Contributing & Community
+
+Bourse follows GitHub's recommended community health standards:
+
+* **[CONTRIBUTING.md](./CONTRIBUTING.md)** — dev setup, quality bar, and PR workflow.
+* **[CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md)** — Contributor Covenant v2.1.
+* **[SECURITY.md](./SECURITY.md)** — how to privately report a vulnerability.
+* **Issue & PR templates** — under [`.github/`](./.github) for structured reports.
+
+### 🔒 Security Tooling
+
+| Control | Status |
+| :--- | :--- |
+| **CodeQL** static analysis (SAST) | ✅ Enabled |
+| **Dependabot** alerts + version/security updates | ✅ Enabled |
+| **Secret scanning** + push protection | ✅ Enabled |
+| **TruffleHog** secret scan (CI) | ✅ Enabled |
+| **pip-audit** dependency CVE audit (CI) | ✅ Enabled |
+
+Report vulnerabilities privately via [GitHub Security Advisories](https://github.com/edycutjong/bourse/security/advisories/new) — see [SECURITY.md](./SECURITY.md).
